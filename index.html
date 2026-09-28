@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Michi & Dogui - Mejores Amigos</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      /* Fondo de cielo soleado */
+      background: linear-gradient(to bottom, #dbeafe 0%, #fef3c7 70%);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 16px max(20px, env(safe-area-inset-bottom));
+      position: relative;
+    }
+
+    /* Fondo decorativo (nubes y suelo) */
+    .fondo-nube {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 50px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .suelo-pasto {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      background: linear-gradient(to top, #86efac 0%, #bbf7d0 70%, transparent 100%);
+      border-radius: 50% 50% 0 0 / 20px 20px 0 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .top-panel {
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 20;
+    }
+
+    .titulo-app {
+      color: #b45309;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+    }
+
+    .nivel-card {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 16px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(180, 83, 9, 0.08);
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nivel-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #78350f;
+    }
+
+    .nivel-valor {
+      font-size: 13px;
+      font-weight: 900;
+      color: #d97706;
+    }
+
+    .stage {
+      flex: 1;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .speech-bubble {
+      background: #ffffff;
+      color: #78350f;
+      padding: 10px 16px;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 1.4;
+      box-shadow: 0 6px 16px rgba(180, 83, 9, 0.1);
+      margin-bottom: 25px;
+      position: relative;
+      border: 2px solid #f59e0b;
+      max-width: 95%;
+      text-align: center;
+    }
+
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 8px 8px 0;
+      border-style: solid;
+      border-color: #ffffff transparent;
+    }
+
+    .duo-container {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      align-items: flex-end;
+      position: relative;
+      margin-bottom: 5px;
+    }
+
+    .mascota-wrapper {
+      width: 130px;
+      height: 130px;
+      cursor: pointer;
+      position: relative;
+      animation: floatIdle 3.5s infinite ease-in-out;
+    }
+
+    .mascota-wrapper:nth-child(2) {
+      animation-delay: 1.7s;
+    }
+
+    @keyframes floatIdle {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* Animaciones de acciones */
+    .mascota-wrapper.happy-bounce { animation: bounce 0.6s ease; }
+    .mascota-wrapper.dance-spin { animation: danceSpin 0.8s ease infinite alternate; }
+    .mascota-wrapper.hug-anim { animation: hugMove 0.8s ease; }
+    .mascota-wrapper.run-anim { animation: runDash 0.7s ease; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-18px) scale(1.1, 0.9); }
+    }
+
+    @keyframes danceSpin {
+      0% { transform: translateY(0) rotate(-10deg) scale(1); }
+      100% { transform: translateY(-12px) rotate(10deg) scale(1.05); }
+    }
+
+    @keyframes hugMove {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1) translateY(-5px); }
+    }
+
+    @keyframes runDash {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(15px) scale(1.05); }
+    }
+
+    .shadow-container {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+    }
+
+    .shadow {
+      width: 90px;
+      height: 10px;
+      background: rgba(120, 53, 15, 0.15);
+      border-radius: 50%;
+    }
+
+    .controls {
+      width: 100%;
+      max-width: 380px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      background: #ffffff;
+      padding: 8px;
+      border-radius: 18px;
+      box-shadow: 0 6px 18px rgba(180, 83, 9, 0.15);
+      border: 2px solid #f59e0b;
+      z-index: 20;
+    }
+
+    .btn {
+      background: #fff3c4;
+      color: #78350f;
+      border: none;
+      padding: 10px;
+      border-radius: 14px;
+      font-weight: 900;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      touch-action: manipulation;
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+      background: #fde68a;
+    }
+
+    .btn-icon { font-size: 16px; }
+
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      animation: floatUp 1.2s forwards ease-out;
+      z-index: 30;
+      font-size: 22px;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(0.8); }
+      100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Elementos de fondo decorativos -->
+  <div class="fondo-nube" style="width: 90px; height: 35px; top: 15%; left: 10%;"></div>
+  <div class="fondo-nube" style="width: 120px; height: 45px; top: 10%; right: 12%;"></div>
+  <div class="suelo-pasto"></div>
+
+  <div class="top-panel">
+    <div class="titulo-app">Michi & Dogui 🐾</div>
+    <div class="nivel-card">
+      <span class="nivel-label">Nivel de Amistad</span>
+      <span class="nivel-valor" id="txt-nivel">✨ Amigos Inseparables (Nivel <span id="num-nivel">1</span>)</span>
+    </div>
+  </div>
+
+  <div class="stage" id="stage-area">
+    <div class="speech-bubble" id="bocadillo">¡Hola! Somos Michi y Dogui, ¡los mejores amigos del mundo! 🐶🐱</div>
+    
+    <div class="duo-container">
+      <!-- MICHI -->
+      <div class="mascota-wrapper" id="michi-box" onclick="tocarMascota('michi', event)">
+        <svg viewBox="0 0 100 100" width="100%" height="100%">
+          <path d="M 75 75 Q 92 60 85 45" fill="none" stroke="#e67e22" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="28" cy="78" rx="7" ry="5" fill="#ffffff" stroke="#d35400" stroke-width="1"/>
+          <ellipse cx="72" cy="78" rx="7" ry="5" fill="#ffffff" stroke="#d35400" stroke-width="1"/>
+          <polygon points="22,40 12,18 36,28" fill="#e67e22" stroke="#d35400" stroke-width="1.5"/>
+          <polygon points="24,36 17,22 33,28" fill="#f2a685"/>
+          <polygon points="78,40 88,18 64,28" fill="#e67e22" stroke="#d35400" stroke-width="1.5"/>
+          <polygon points="76,36 83,22 67,28" fill="#f2a685"/>
+          <ellipse cx="50" cy="58" rx="32" ry="28" fill="#e67e22" stroke="#d35400" stroke-width="2"/>
+          <path d="M 50 42 C 40 46 38 62 38 72 C 44 80 56 80 62 72 C 62 62 60 46 50 42 Z" fill="#ffffff"/>
+          <polygon points="48,59 52,59 50,62" fill="#e8a7a1"/>
+          <circle cx="37" cy="53" r="5" fill="#5c3d2e"/>
+          <circle cx="37" cy="53" r="3" fill="#1f110b"/>
+          <circle cx="35.5" cy="51.5" r="1.2" fill="#ffffff"/>
+          <circle cx="63" cy="53" r="5" fill="#5c3d2e"/>
+          <circle cx="63" cy="53" r="3" fill="#1f110b"/>
+          <circle cx="61.5" cy="51.5" r="1.2" fill="#ffffff"/>
+          <path d="M 45 64 Q 50 67 55 64" fill="none" stroke="#2c3e50" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <!-- DOGUI -->
+      <div class="mascota-wrapper" id="dogui-box" onclick="tocarMascota('dogui', event)">
+        <svg viewBox="0 0 100 100" width="100%" height="100%">
+          <path d="M 28 42 C 18 50 22 72 30 70 C 35 68 35 55 33 45 Z" fill="#b45309" stroke="#78350f" stroke-width="1.5"/>
+          <path d="M 72 42 C 82 50 78 72 70 70 C 65 68 65 55 67 45 Z" fill="#b45309" stroke="#78350f" stroke-width="1.5"/>
+          <circle cx="50" cy="58" r="28" fill="#d97706" stroke="#78350f" stroke-width="2"/>
+          <circle cx="50" cy="42" r="22" fill="#d97706" stroke="#78350f" stroke-width="2"/>
+          <ellipse cx="50" cy="48" rx="11" ry="9" fill="#fefce8"/>
+          <ellipse cx="50" cy="46" rx="4" ry="3" fill="#1f110b"/>
+          <circle cx="39" cy="38" r="4" fill="#1f110b"/>
+          <circle cx="37.8" cy="36.8" r="1.2" fill="#ffffff"/>
+          <circle cx="61" cy="38" r="4" fill="#1f110b"/>
+          <circle cx="59.8" cy="36.8" r="1.2" fill="#ffffff"/>
+          <path d="M 45 53 Q 50 57 55 53" fill="none" stroke="#1f110b" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="shadow-container">
+      <div class="shadow"></div>
+      <div class="shadow"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" onclick="realizarAccion('bailar')">
+      <span class="btn-icon">💃</span>
+      <span>Bailar</span>
+    </button>
+    <button class="btn" onclick="realizarAccion('abrazar')">
+      <span class="btn-icon">🤗</span>
+      <span>Abrazar</span>
+    </button>
+    <button class="btn" onclick="realizarAccion('carrera')">
+      <span class="btn-icon">🏃‍♂️</span>
+      <span>Carrera</span>
+    </button>
+    <button class="btn" onclick="realizarAccion('cantar')">
+      <span class="btn-icon">🎤</span>
+      <span>Cantar</span>
+    </button>
+  </div>
+
+  <script>
+    let nivelAmistad = parseInt(localStorage.getItem('duo_amistad')) || 1;
+    const numNivel = document.getElementById('num-nivel');
+    const bocadillo = document.getElementById('bocadillo');
+    const michiBox = document.getElementById('michi-box');
+    const doguiBox = document.getElementById('dogui-box');
+
+    numNivel.innerText = nivelAmistad;
+
+    function mostrarTexto(msg) {
+      bocadillo.innerText = msg;
+    }
+
+    function subirAmistad() {
+      nivelAmistad++;
+      localStorage.setItem('duo_amistad', nivelAmistad);
+      numNivel.innerText = nivelAmistad;
+    }
+
+    function spawnParticle(symbol, el) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.innerText = symbol;
+      const rect = el.getBoundingClientRect();
+      p.style.left = (rect.left + rect.width / 2) + 'px';
+      p.style.top = (rect.top + rect.height / 2) + 'px';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 1200);
+    }
+
+    function triggerAnim(className) {
+      michiBox.classList.remove('happy-bounce', 'dance-spin', 'hug-anim', 'run-anim');
+      doguiBox.classList.remove('happy-bounce', 'dance-spin', 'hug-anim', 'run-anim');
+      void michiBox.offsetWidth;
+      void doguiBox.offsetWidth;
+      michiBox.classList.add(className);
+      doguiBox.classList.add(className);
+    }
+
+    function realizarAccion(tipo) {
+      subirAmistad();
+      if (tipo === 'bailar') {
+        triggerAnim('dance-spin');
+        spawnParticle('🎶', michiBox);
+        spawnParticle('💃', doguiBox);
+        mostrarTexto("🎵 ¡Michi y Dogui están bailando al ritmo de la música juntos! 🕺🐾");
+      } else if (tipo === 'abrazar') {
+        triggerAnim('hug-anim');
+        spawnParticle('💖', michiBox);
+        spawnParticle('🤗', doguiBox);
+        mostrarTexto("🤗 ¡Qué gran abrazo! El amor entre un gatito y un perrito no tiene límites. 💕");
+      } else if (tipo === 'carrera') {
+        triggerAnim('run-anim');
+        spawnParticle('💨', michiBox);
+        spawnParticle('⚡', doguiBox);
+        mostrarTexto("🏃‍♂️ ¡Están haciendo una carrera por el jardín! ¡Nadie se decide quién corre más rápido! 🐾");
+      } else if (tipo === 'cantar') {
+        triggerAnim('dance-spin');
+        spawnParticle('🎵', michiBox);
+        spawnParticle('🎤', doguiBox);
+        mostrarTexto("🎤 ¡Miau, guau! Forman el dúo musical perfecto bajo el sol 🎶✨");
+      }
+    }
+
+    function tocarMascota(quien, e) {
+      if (quien === 'michi') {
+        triggerAnim('happy-bounce');
+        spawnParticle('💖', michiBox);
+        mostrarTexto("🐱 Michi ronronea feliz de estar con su amigo Dogui.");
+      } else {
+        triggerAnim('happy-bounce');
+        spawnParticle('💖', doguiBox);
+        mostrarTexto("🐶 ¡Dogui mueve la cola contento al lado de Michi!");
+      }
+    }
+  </script>
+</body>
+</html>
