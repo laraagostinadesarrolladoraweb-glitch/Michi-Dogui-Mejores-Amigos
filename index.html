@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Michi & Dogui - Mejores Amigos</title>
+  <title>Michi & Dogui - Interactivo</title>
   <style>
     * {
       box-sizing: border-box;
@@ -21,6 +21,11 @@
       height: 100%;
       overflow: hidden;
       background: linear-gradient(to bottom, #dbeafe 0%, #fef3c7 70%);
+      transition: background 1s ease;
+    }
+
+    body.noche {
+      background: linear-gradient(to bottom, #1e1b4b 0%, #4c1d95 70%);
     }
 
     body {
@@ -28,36 +33,56 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 16px max(20px, env(safe-area-inset-bottom));
+      padding: 20px;
       position: relative;
     }
 
-    .scene-container {
-      width: 100%;
-      height: 100%;
+    /* Elementos del entorno */
+    .sol-luna {
       position: absolute;
-      top: 0;
-      left: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 16px max(20px, env(safe-area-inset-bottom));
-      pointer-events: none;
+      top: 25px;
+      right: 30px;
+      width: 55px;
+      height: 55px;
+      background: #f59e0b;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 25px #fbbf24;
+      transition: all 0.5s ease;
+      z-index: 5;
+    }
+
+    body.noche .sol-luna {
+      background: #e2e8f0;
+      box-shadow: 0 0 20px #cbd5e1;
+      border-radius: 50% 20% 50% 50%;
     }
 
     .fondo-nube {
       position: absolute;
-      background: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.85);
       border-radius: 50px;
-      pointer-events: none;
-      z-index: 1;
-      animation: floatNube 10s ease-in-out infinite alternate;
+      cursor: pointer;
+      z-index: 3;
+      transition: transform 0.3s ease;
     }
 
-    @keyframes floatNube {
-      0% { transform: translateX(-10px); }
-      100% { transform: translateX(10px); }
+    .fondo-nube:hover { transform: scale(1.05); }
+
+    .gota-lluvia {
+      position: absolute;
+      background: #38bdf8;
+      width: 3px;
+      height: 15px;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: caerLluvia 0.8s linear infinite;
+      z-index: 4;
+    }
+
+    @keyframes caerLluvia {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(350px); opacity: 0; }
     }
 
     .suelo-pasto {
@@ -65,27 +90,21 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 130px;
+      height: 140px;
       background: linear-gradient(to top, #86efac 0%, #bbf7d0 70%, transparent 100%);
-      border-radius: 50% 50% 0 0 / 25px 25px 0 0;
+      border-radius: 50% 50% 0 0 / 30px 30px 0 0;
       pointer-events: none;
       z-index: 2;
     }
 
-    .titulo-app {
-      color: #b45309;
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      text-shadow: 0 2px 4px rgba(255,255,255,0.9);
-      z-index: 20;
-      margin-top: 5px;
+    body.noche .suelo-pasto {
+      background: linear-gradient(to top, #15803d 0%, #166534 70%, transparent 100%);
     }
 
     .stage {
       flex: 1;
       width: 100%;
-      max-width: 380px;
+      max-width: 400px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -94,41 +113,13 @@
       z-index: 10;
     }
 
-    .speech-bubble {
-      background: #ffffff;
-      color: #78350f;
-      padding: 10px 16px;
-      border-radius: 16px;
-      font-weight: 700;
-      font-size: 12px;
-      line-height: 1.4;
-      box-shadow: 0 8px 20px rgba(180, 83, 9, 0.15);
-      margin-bottom: 25px;
-      position: relative;
-      border: 2px solid #f59e0b;
-      max-width: 95%;
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    .speech-bubble::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-width: 8px 8px 0;
-      border-style: solid;
-      border-color: #ffffff transparent;
-    }
-
     .duo-container {
       display: flex;
-      gap: 30px;
+      gap: 40px;
       justify-content: center;
       align-items: flex-end;
       position: relative;
-      margin-bottom: 5px;
+      margin-bottom: 10px;
     }
 
     .mascota-wrapper {
@@ -139,7 +130,7 @@
       pointer-events: auto;
       filter: drop-shadow(0 12px 8px rgba(0,0,0,0.12));
       animation: respirar 3s ease-in-out infinite;
-      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     #michi-box { animation-delay: 0s; }
@@ -150,40 +141,30 @@
       50% { transform: translateY(-4px) scale(1.02, 0.98); }
     }
 
-    /* Acciones dinámicas individuales */
-    .mascota-wrapper.jump-action { animation: jumpVivo 0.6s ease; }
-    .mascota-wrapper.spin-action { animation: spinVivo 0.7s ease; }
-    .mascota-wrapper.dash-action { animation: dashVivo 0.6s ease; }
+    /* Acciones visuales */
+    .mascota-wrapper.jump { animation: saltarVivo 0.5s ease; }
+    .mascota-wrapper.spin { animation: girarVivo 0.6s ease; }
+    .mascota-wrapper.shake { animation: mareoVivo 0.4s ease infinite; }
 
-    @keyframes jumpVivo {
-      0%, 100% { transform: translateY(0) scale(1); }
-      30% { transform: translateY(-45px) scale(1.05, 0.95) rotate(-3deg); }
-      60% { transform: translateY(-45px) scale(0.95, 1.05) rotate(3deg); }
+    @keyframes saltarVivo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-50px) scale(1.05, 0.95); }
     }
 
-    @keyframes spinVivo {
-      0% { transform: rotate(0deg) scale(1); }
-      50% { transform: rotate(180deg) scale(1.1); }
-      100% { transform: rotate(360deg) scale(1); }
+    @keyframes girarVivo {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
-    @keyframes dashVivo {
-      0%, 100% { transform: translateX(0); }
-      50% { transform: translateX(20px) scale(1.08, 0.92); }
-    }
-
-    /* Estado de Abrazo: se acercan al centro */
-    .duo-container.hugging #michi-box {
-      transform: translateX(45px) scale(1.1) translateY(-10px);
-    }
-
-    .duo-container.hugging #dogui-box {
-      transform: translateX(-45px) scale(1.1) translateY(-10px);
+    @keyframes mareoVivo {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      25% { transform: translateX(-8px) rotate(-8deg); }
+      75% { transform: translateX(8px) rotate(8deg); }
     }
 
     .shadow-container {
       display: flex;
-      gap: 50px;
+      gap: 70px;
       justify-content: center;
     }
 
@@ -192,7 +173,6 @@
       height: 12px;
       background: rgba(120, 53, 15, 0.22);
       border-radius: 50%;
-      transition: transform 0.6s ease, width 0.6s ease;
       animation: sombraRespirar 3s ease-in-out infinite;
     }
 
@@ -200,66 +180,41 @@
 
     @keyframes sombraRespirar {
       0%, 100% { transform: scale(1); opacity: 0.8; }
-      50% { transform: scale(0.9); opacity: 0.5; }
+      50% { transform: scale(0.85); opacity: 0.4; }
     }
 
-    .duo-container.hugging ~ .shadow-container #shadow-1 {
-      transform: translateX(25px) scale(0.7);
-    }
-
-    .duo-container.hugging ~ .shadow-container #shadow-2 {
-      transform: translateX(-25px) scale(0.7);
-    }
-
-    .controls {
-      width: 100%;
-      max-width: 380px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 10px;
-      border-radius: 18px;
-      box-shadow: 0 8px 24px rgba(180, 83, 9, 0.15);
-      border: 2px solid #f59e0b;
-      z-index: 20;
-      pointer-events: auto;
-    }
-
-    .btn {
-      background: #fff3c4;
-      color: #78350f;
-      border: none;
-      padding: 12px;
-      border-radius: 14px;
-      font-weight: 900;
-      font-size: 13px;
-      cursor: pointer;
+    /* Juguetes interactivos flotantes abajo */
+    .juguetes-bar {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      touch-action: manipulation;
-      transition: background 0.2s ease, transform 0.1s ease;
-      box-shadow: 0 4px 10px rgba(180, 83, 9, 0.1);
+      gap: 25px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 12px 25px;
+      border-radius: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      z-index: 20;
+      backdrop-filter: blur(5px);
+      margin-bottom: 10px;
+      border: 2px solid rgba(255,255,255,0.9);
     }
 
-    .btn:active {
-      transform: scale(0.94);
-      background: #fde68a;
+    .juguete {
+      font-size: 30px;
+      cursor: grab;
+      transition: transform 0.2s ease;
+      touch-action: none;
     }
 
-    .btn-icon { font-size: 16px; }
+    .juguete:active { cursor: grabbing; transform: scale(1.2); }
 
     .particle {
       position: absolute;
       pointer-events: none;
-      animation: floatUpVivo 1s forwards ease-out;
+      animation: floatUp 1s forwards ease-out;
       z-index: 30;
-      font-size: 24px;
+      font-size: 26px;
     }
 
-    @keyframes floatUpVivo {
+    @keyframes floatUp {
       0% { opacity: 1; transform: translateY(0) scale(0.8); }
       100% { opacity: 0; transform: translateY(-70px) scale(1.4); }
     }
@@ -267,95 +222,71 @@
 </head>
 <body>
 
-  <div class="scene-container">
-    <div class="fondo-nube" style="width: 100px; height: 35px; top: 15%; left: 8%;"></div>
-    <div class="fondo-nube" style="width: 130px; height: 45px; top: 12%; right: 10%;"></div>
-    <div class="suelo-pasto"></div>
+  <!-- Entorno: Sol/Luna y Nubes -->
+  <div class="sol-luna" onclick="cambiarClima()" title="Cambiar clima"></div>
+  <div class="fondo-nube" style="width: 110px; height: 38px; top: 20%; left: 10%;" onclick="activarLluvia()" title="Hacer llover"></div>
+  <div class="fondo-nube" style="width: 90px; height: 32px; top: 15%; right: 25%;" onclick="activarLluvia()" title="Hacer llover"></div>
+  <div class="suelo-pasto"></div>
 
-    <div class="titulo-app">Michi & Dogui 🐾</div>
-
-    <div class="stage">
-      <div class="speech-bubble" id="bocadillo">¡Toca los botones o a nosotros para vernos cobrar vida! 🌟</div>
-      
-      <div class="duo-container" id="duoContainer">
-        <!-- MICHI -->
-        <div class="mascota-wrapper" id="michi-box" onclick="tocarMascota('michi')">
-          <svg viewBox="0 0 100 100" width="100%" height="100%">
-            <path d="M 75 75 Q 92 60 85 45" fill="none" stroke="#e67e22" stroke-width="5" stroke-linecap="round"/>
-            <ellipse cx="28" cy="78" rx="7" ry="5" fill="#ffffff" stroke="#d35400" stroke-width="1"/>
-            <ellipse cx="72" cy="78" rx="7" ry="5" fill="#ffffff" stroke="#d35400" stroke-width="1"/>
-            <polygon points="22,40 12,18 36,28" fill="#e67e22" stroke="#d35400" stroke-width="1.5"/>
-            <polygon points="24,36 17,22 33,28" fill="#f2a685"/>
-            <polygon points="78,40 88,18 64,28" fill="#e67e22" stroke="#d35400" stroke-width="1.5"/>
-            <polygon points="76,36 83,22 67,28" fill="#f2a685"/>
-            <ellipse cx="50" cy="58" rx="32" ry="28" fill="#e67e22" stroke="#d35400" stroke-width="2"/>
-            <path d="M 50 42 C 40 46 38 62 38 72 C 44 80 56 80 62 72 C 62 62 60 46 50 42 Z" fill="#ffffff"/>
-            <polygon points="48,59 52,59 50,62" fill="#e8a7a1"/>
-            <circle cx="37" cy="53" r="5" fill="#5c3d2e"/>
-            <circle cx="37" cy="53" r="3" fill="#1f110b"/>
-            <circle cx="35.5" cy="51.5" r="1.2" fill="#ffffff"/>
-            <circle cx="63" cy="53" r="5" fill="#5c3d2e"/>
-            <circle cx="63" cy="53" r="3" fill="#1f110b"/>
-            <circle cx="61.5" cy="51.5" r="1.2" fill="#ffffff"/>
-            <path d="M 45 64 Q 50 67 55 64" fill="none" stroke="#2c3e50" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
-        </div>
-
-        <!-- DOGUI -->
-        <div class="mascota-wrapper" id="dogui-box" onclick="tocarMascota('dogui')">
-          <svg viewBox="0 0 100 100" width="100%" height="100%">
-            <path d="M 28 42 C 18 50 22 72 30 70 C 35 68 35 55 33 45 Z" fill="#b45309" stroke="#78350f" stroke-width="1.5"/>
-            <path d="M 72 42 C 82 50 78 72 70 70 C 65 68 65 55 67 45 Z" fill="#b45309" stroke="#78350f" stroke-width="1.5"/>
-            <circle cx="50" cy="58" r="28" fill="#d97706" stroke="#78350f" stroke-width="2"/>
-            <circle cx="50" cy="42" r="22" fill="#d97706" stroke="#78350f" stroke-width="2"/>
-            <ellipse cx="50" cy="48" rx="11" ry="9" fill="#fefce8"/>
-            <ellipse cx="50" cy="46" rx="4" ry="3" fill="#1f110b"/>
-            <circle cx="39" cy="38" r="4" fill="#1f110b"/>
-            <circle cx="37.8" cy="36.8" r="1.2" fill="#ffffff"/>
-            <circle cx="61" cy="38" r="4" fill="#1f110b"/>
-            <circle cx="59.8" cy="36.8" r="1.2" fill="#ffffff"/>
-            <path d="M 45 53 Q 50 57 55 53" fill="none" stroke="#1f110b" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
-        </div>
+  <div class="stage">
+    <div class="duo-container">
+      <!-- MICHI -->
+      <div class="mascota-wrapper" id="michi-box" onclick="tocarParte('michi', event)">
+        <svg viewBox="0 0 100 100" width="100%" height="100%">
+          <path d="M 75 75 Q 92 60 85 45" fill="none" stroke="#e67e22" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="28" cy="78" rx="7" ry="5" fill="#ffffff" stroke="#d35400" stroke-width="1"/>
+          <ellipse cx="72" cy="78" rx="7" ry="5" fill="#ffffff" stroke="#d35400" stroke-width="1"/>
+          <polygon points="22,40 12,18 36,28" fill="#e67e22" stroke="#d35400" stroke-width="1.5"/>
+          <polygon points="24,36 17,22 33,28" fill="#f2a685"/>
+          <polygon points="78,40 88,18 64,28" fill="#e67e22" stroke="#d35400" stroke-width="1.5"/>
+          <polygon points="76,36 83,22 67,28" fill="#f2a685"/>
+          <ellipse cx="50" cy="58" rx="32" ry="28" fill="#e67e22" stroke="#d35400" stroke-width="2"/>
+          <path d="M 50 42 C 40 46 38 62 38 72 C 44 80 56 80 62 72 C 62 62 60 46 50 42 Z" fill="#ffffff"/>
+          <polygon points="48,59 52,59 50,62" fill="#e8a7a1"/>
+          <circle cx="37" cy="53" r="5" fill="#5c3d2e"/>
+          <circle cx="37" cy="53" r="3" fill="#1f110b"/>
+          <circle cx="35.5" cy="51.5" r="1.2" fill="#ffffff"/>
+          <circle cx="63" cy="53" r="5" fill="#5c3d2e"/>
+          <circle cx="63" cy="53" r="3" fill="#1f110b"/>
+          <circle cx="61.5" cy="51.5" r="1.2" fill="#ffffff"/>
+          <path d="M 45 64 Q 50 67 55 64" fill="none" stroke="#2c3e50" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
       </div>
 
-      <div class="shadow-container">
-        <div class="shadow" id="shadow-1"></div>
-        <div class="shadow" id="shadow-2"></div>
+      <!-- DOGUI -->
+      <div class="mascota-wrapper" id="dogui-box" onclick="tocarParte('dogui', event)">
+        <svg viewBox="0 0 100 100" width="100%" height="100%">
+          <path d="M 28 42 C 18 50 22 72 30 70 C 35 68 35 55 33 45 Z" fill="#b45309" stroke="#78350f" stroke-width="1.5"/>
+          <path d="M 72 42 C 82 50 78 72 70 70 C 65 68 65 55 67 45 Z" fill="#b45309" stroke="#78350f" stroke-width="1.5"/>
+          <circle cx="50" cy="58" r="28" fill="#d97706" stroke="#78350f" stroke-width="2"/>
+          <circle cx="50" cy="42" r="22" fill="#d97706" stroke="#78350f" stroke-width="2"/>
+          <ellipse cx="50" cy="48" rx="11" ry="9" fill="#fefce8"/>
+          <ellipse cx="50" cy="46" rx="4" ry="3" fill="#1f110b"/>
+          <circle cx="39" cy="38" r="4" fill="#1f110b"/>
+          <circle cx="37.8" cy="36.8" r="1.2" fill="#ffffff"/>
+          <circle cx="61" cy="38" r="4" fill="#1f110b"/>
+          <circle cx="59.8" cy="36.8" r="1.2" fill="#ffffff"/>
+          <path d="M 45 53 Q 50 57 55 53" fill="none" stroke="#1f110b" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
       </div>
     </div>
 
-    <div class="controls">
-      <button class="btn" onclick="realizarAccion('saltar')">
-        <span class="btn-icon">⚡</span>
-        <span>Saltar</span>
-      </button>
-      <button class="btn" onclick="realizarAccion('girar')">
-        <span class="btn-icon">🌀</span>
-        <span>Girar</span>
-      </button>
-      <button class="btn" onclick="realizarAccion('carrera')">
-        <span class="btn-icon">🏃‍♂️</span>
-        <span>Carrera</span>
-      </button>
-      <button class="btn" onclick="realizarAccion('abrazar')">
-        <span class="btn-icon">💖</span>
-        <span>Abrazo</span>
-      </button>
+    <div class="shadow-container">
+      <div class="shadow" id="shadow-1"></div>
+      <div class="shadow" id="shadow-2"></div>
     </div>
   </div>
 
+  <!-- Juguetes interactivos para arrastrar -->
+  <div class="juguetes-bar">
+    <div class="juguete" id="toy-ball" draggable="true">⚽</div>
+    <div class="juguete" id="toy-food" draggable="true">🍖</div>
+  </div>
+
   <script>
-    const bocadillo = document.getElementById('bocadillo');
     const michiBox = document.getElementById('michi-box');
     const doguiBox = document.getElementById('dogui-box');
-    const duoContainer = document.getElementById('duoContainer');
-    const shadow1 = document.getElementById('shadow-1');
-    const shadow2 = document.getElementById('shadow-2');
-
-    function mostrarTexto(msg) {
-      bocadillo.innerText = msg;
-    }
+    const body = document.body;
 
     function spawnParticle(symbol, el) {
       const p = document.createElement('div');
@@ -368,70 +299,115 @@
       setTimeout(() => p.remove(), 1000);
     }
 
-    function limpiarAcciones() {
-      michiBox.classList.remove('jump-action', 'spin-action', 'dash-action');
-      doguiBox.classList.remove('jump-action', 'spin-action', 'dash-action');
-      duoContainer.classList.remove('hugging');
+    function animarMascota(el, clase) {
+      el.classList.remove('jump', 'spin');
+      void el.offsetWidth;
+      el.classList.add(clase);
+      setTimeout(() => el.classList.remove(clase), 600);
     }
 
-    function realizarAccion(tipo) {
-      limpiarAcciones();
+    // 1. Tocar por zonas de la mascota
+    function tocarParte(quien, event) {
+      const el = quien === 'michi' ? michiBox : doguiBox;
+      const rect = el.getBoundingClientRect();
+      const clickY = event.clientY - rect.top;
 
-      if (tipo === 'saltar') {
-        void michiBox.offsetWidth;
-        michiBox.classList.add('jump-action');
-        doguiBox.classList.add('jump-action');
-        shadow1.style.transform = 'scale(0.5)';
-        shadow2.style.transform = 'scale(0.5)';
-        setTimeout(() => {
-          shadow1.style.transform = 'scale(1)';
-          shadow2.style.transform = 'scale(1)';
-        }, 600);
-        spawnParticle('✨', michiBox);
-        spawnParticle('🚀', doguiBox);
-        mostrarTexto("🚀 ¡Brincando de alegría por todo el jardín! 🌟");
-      } else if (tipo === 'girar') {
-        void michiBox.offsetWidth;
-        michiBox.classList.add('spin-action');
-        doguiBox.classList.add('spin-action');
-        spawnParticle('💫', michiBox);
-        spawnParticle('🌀', doguiBox);
-        mostrarTexto("🌀 ¡Dando vueltas llenos de energía y diversión! 😸🐶");
-      } else if (tipo === 'carrera') {
-        void michiBox.offsetWidth;
-        michiBox.classList.add('dash-action');
-        doguiBox.classList.add('dash-action');
-        spawnParticle('💨', michiBox);
-        spawnParticle('⚡', doguiBox);
-        mostrarTexto("🏃‍♂️ ¡Corriendo una carrerita muy animados! 🐾");
-      } else if (tipo === 'abrazar') {
-        // Se acercan al centro mutuamente
-        duoContainer.classList.add('hugging');
-        spawnParticle('💖', michiBox);
-        spawnParticle('🥰', doguiBox);
-        mostrarTexto("💖 ¡Se acercan y se dan un super abrazo de mejores amigos! 🥰");
-
-        // Regresan a su sitio después de un momento
-        setTimeout(() => {
-          duoContainer.classList.remove('hugging');
-        }, 1200);
-      }
-    }
-
-    function tocarMascota(quien) {
-      limpiarAcciones();
-      void michiBox.offsetWidth;
-      michiBox.classList.add('jump-action');
-      doguiBox.classList.add('jump-action');
-      
-      if (quien === 'michi') {
-        spawnParticle('✨', michiBox);
-        mostrarTexto("🐱 ¡Michi ronronea feliz con tu caricia!");
+      if (clickY < rect.height * 0.4) {
+        // Cabeza: Salto feliz y corazones
+        animarMascota(el, 'jump');
+        spawnParticle('💖', el);
+      } else if (clickY > rect.height * 0.7) {
+        // Colita: Giro divertido
+        animarMascota(el, 'spin');
+        spawnParticle('✨', el);
       } else {
-        spawnParticle('🐾', doguiBox);
-        mostrarTexto("🐶 ¡Dogui mueve la cola muy emocionado!");
+        // Pancita: Risas / saltito doble
+        animarMascota(el, 'jump');
+        spawnParticle('😸', el);
       }
     }
+
+    // 2. Entorno: Cambiar clima (Sol / Luna)
+    function cambiarClima() {
+      body.classList.toggle('noche');
+      spawnParticle(body.classList.contains('noche') ? '🌙' : '☀️', document.querySelector('.sol-luna'));
+    }
+
+    // 3. Entorno: Hacer llover al tocar las nubes
+    function activarLluvia() {
+      for (let i = 0; i < 12; i++) {
+        let gota = document.createElement('div');
+        gota.className = 'gota-lluvia';
+        gota.style.left = Math.random() * window.innerWidth + 'px';
+        gota.style.top = (Math.random() * 80) + 'px';
+        document.body.appendChild(gota);
+        setTimeout(() => gota.remove(), 800);
+      }
+      spawnParticle('☔', michiBox);
+    }
+
+    // 4. Gestos: Mareo por movimiento rápido del mouse / pantalla
+    let ultimoX = 0, ultimoY = 0, ultimoTiempo = Date.now();
+    window.addEventListener('mousemove', (e) => {
+      let ahora = Date.now();
+      if (ahora - ultimoTiempo > 100) {
+        let velocidad = Math.abs(e.clientX - ultimoX) + Math.abs(e.clientY - ultimoY);
+        if (velocidad > 150) {
+          michiBox.classList.add('shake');
+          doguiBox.classList.add('shake');
+          setTimeout(() => {
+            michiBox.classList.remove('shake');
+            doguiBox.classList.remove('shake');
+          }, 800);
+        }
+        ultimoX = e.clientX;
+        ultimoY = e.clientY;
+        ultimoTiempo = ahora;
+      }
+    });
+
+    // 5. Sistema de Arrastrar Juguetes (Drag & Drop táctil y mouse)
+    const juguetes = document.querySelectorAll('.juguete');
+    juguetes.forEach(juguete => {
+      let posX = 0, posY = 0, initialX = 0, initialY = 0;
+
+      juguete.addEventListener('pointerdown', dragStart);
+
+      function dragStart(e) {
+        initialX = e.clientX;
+        initialY = e.clientY;
+        juguete.style.position = 'relative';
+        juguete.style.zIndex = '100';
+        window.addEventListener('pointermove', drag);
+        window.addEventListener('pointerup', dragEnd);
+      }
+
+      function drag(e) {
+        posX = e.clientX - initialX;
+        posY = e.clientY - initialY;
+        juguete.style.transform = `translate(${posX}px, ${posY}px) scale(1.2)`;
+      }
+
+      function dragEnd(e) {
+        window.removeEventListener('pointermove', drag);
+        window.removeEventListener('pointerup', dragEnd);
+
+        // Detectar si soltó sobre alguna mascota
+        const rectMichi = michiBox.getBoundingClientRect();
+        const rectDogui = doguiBox.getBoundingClientRect();
+
+        if (e.clientX >= rectMichi.left && e.clientX <= rectMichi.right && e.clientY >= rectMichi.top && e.clientY <= rectMichi.bottom) {
+          animarMascota(michiBox, 'jump');
+          spawnParticle(juguete.innerText, michiBox);
+        } else if (e.clientX >= rectDogui.left && e.clientX <= rectDogui.right && e.clientY >= rectDogui.top && e.clientY <= rectDogui.bottom) {
+          animarMascota(doguiBox, 'jump');
+          spawnParticle(juguete.innerText, doguiBox);
+        }
+
+        juguete.style.transform = 'translate(0px, 0px) scale(1)';
+        juguete.style.zIndex = '20';
+      }
+    });
   </script>
 </body>
 </html>
