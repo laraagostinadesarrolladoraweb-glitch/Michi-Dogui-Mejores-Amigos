@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espacio Calma - Asistencia y Orientación Emocional</title>
+    <title>Espacio Calma - Apoyo Emocional</title>
     <style>
         :root {
             --primary: #4A7C59;
@@ -34,36 +34,32 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
 
-        /* Franja de Emergencia Superior (Siempre visible) */
+        /* Franja de Emergencia Superior */
         .emergency-banner {
             background-color: var(--alert-bg);
             border-bottom: 2px solid var(--alert-border);
             color: var(--alert-text);
-            padding: 12px 16px;
+            padding: 10px 16px;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: flex;
             flex-direction: column;
             gap: 4px;
             z-index: 10;
         }
 
-        .emergency-banner strong {
-            font-size: 1rem;
-        }
-
         .btn-emergency {
             background-color: var(--alert-text);
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 20px;
             font-weight: bold;
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
-            margin-top: 4px;
-            font-size: 0.9rem;
+            margin-top: 2px;
+            font-size: 0.85rem;
             width: fit-content;
             align-self: center;
         }
@@ -144,34 +140,33 @@
             border-bottom-right-radius: 4px;
         }
 
-        /* Botones de Respuesta Rápida */
-        .quick-replies {
-            padding: 8px 16px;
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            background-color: var(--chat-bg);
-            white-space: nowrap;
-        }
-
-        .quick-replies::-webkit-scrollbar {
+        /* Indicador de escritura animado */
+        .typing-indicator {
             display: none;
+            align-self: flex-start;
+            background-color: #EBF2ED;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border-bottom-left-radius: 4px;
         }
 
-        .chip {
-            background-color: #E2ECE5;
-            color: var(--primary);
-            border: 1px solid var(--primary-light);
-            padding: 8px 14px;
-            border-radius: 16px;
-            font-size: 0.85krem;
-            cursor: pointer;
-            transition: all 0.2s;
+        .typing-dots span {
+            height: 7px;
+            width: 7px;
+            float: left;
+            margin: 0 2px;
+            background-color: var(--primary-light);
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.3s infinite ease-in-out;
         }
 
-        .chip:hover {
-            background-color: var(--primary);
-            color: white;
+        .typing-dots span:nth-child(2) { animation-delay: -1.1s; }
+        .typing-dots span:nth-child(3) { animation-delay: -0.9s; }
+
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
         }
 
         /* Barra de Entrada de Texto */
@@ -215,7 +210,6 @@
             background-color: var(--primary-light);
         }
 
-        /* Disclaimer inferior de privacidad */
         .footer-disclaimer {
             font-size: 0.7rem;
             text-align: center;
@@ -227,9 +221,9 @@
 </head>
 <body>
 
-    <!-- Banner de emergencia superior constante -->
+    <!-- Franja de emergencia superior constante -->
     <div class="emergency-banner">
-        <span>🚨 <strong>¿Crisis o pensamientos oscuros? No estás solo/a.</strong> Llama gratis y confidencial las 24 horas:</span>
+        <span>🚨 ¿Necesitas hablar urgente con un profesional? Línea confidencial 24 hs:</span>
         <a href="tel:135" class="btn-emergency">📞 Llamar al 135</a>
     </div>
 
@@ -238,74 +232,116 @@
         <div class="avatar">AC</div>
         <div class="chat-header-info">
             <h1>Espacio Calma</h1>
-            <p>Asistente virtual de orientación y contención</p>
+            <p>Conversación abierta y de contención</p>
         </div>
     </div>
 
     <!-- Mensajes del chat -->
     <div class="chat-messages" id="chatMessages">
         <div class="message bot">
-            Hola. Qué bueno que estés aquí. Este es un espacio seguro para frenar un momento, respirar y ordenar tus pensamientos. ¿Cómo te sientes en este instante?
+            Hola. Este es un espacio totalmente libre para expresarte. Puedes contarme cómo ha sido tu día, qué te preocupa o simplemente escribir lo que necesites sacar de tu mente. Te leo.
+        </div>
+        <!-- Indicador de escritura -->
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dots">
+                <span></span><span></span><span></span>
+            </div>
         </div>
     </div>
 
-    <!-- Opciones rápidas para guiar al usuario -->
-    <div class="quick-replies" id="quickReplies">
-        <button class="chip" onclick="handleUserChoice('ansiedad')">🌊 Tengo mucha ansiedad</button>
-        <button class="chip" onclick="handleUserChoice('triste')">🌧️ Me siento triste o abrumado/a</button>
-        <button class="chip" onclick="handleUserChoice('hablar')">💬 Solo quiero desahogarme</button>
-    </div>
-
-    <!-- Campo de escritura -->
+    <!-- Campo de escritura libre -->
     <div class="chat-input-area">
-        <input type="text" id="userInput" placeholder="Escribe cómo te sientes..." onkeypress="handleKeyPress(event)">
+        <input type="text" id="userInput" placeholder="Escribe aquí con total libertad..." onkeypress="handleKeyPress(event)">
         <button onclick="sendMessage()">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
         </button>
     </div>
 
     <div class="footer-disclaimer">
-        Esta herramienta no reemplaza la atención psicológica profesional.
+        Herramienta de apoyo emocional. No reemplaza la terapia psicológica profesional.
     </div>
 
     <script>
         const chatMessages = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
-        const quickReplies = document.getElementById('quickReplies');
+        const typingIndicator = document.getElementById('typingIndicator');
 
-        // Palabras clave de alerta crítica para mostrar ayuda urgente
-        const keywordsAlarma = ['suicidio', 'morir', 'matar', 'no quiero vivir', 'no aguanto más', 'acabar con todo', 'desaparecer', 'colgar', 'pastillas'];
+        // Palabras de riesgo / emergencia crítica
+        const keywordsAlarma = ['suicidio', 'morir', 'matar', 'no quiero vivir', 'no aguanto más', 'acabar con todo', 'desaparecer', 'colgar', 'pastillas', 'quitarme la vida'];
 
         function appendMessage(text, sender) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
             messageDiv.textContent = text;
-            chatMessages.appendChild(messageDiv);
+            chatMessages.insertBefore(messageDiv, typingIndicator);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        function checkKeywords(text) {
-            const lowerText = text.toLowerCase();
-            return keywordsAlarma.some(keyword => lowerText.includes(keyword));
+        function showTyping() {
+            typingIndicator.style.display = 'block';
+            scrollToBottom();
+        }
+
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+
+        // Sistema inteligente para generar respuestas abiertas y variadas
+        function generarRespuestaUniversal(texto) {
+            const lower = texto.toLowerCase();
+
+            // 1. Detección de emergencia o crisis crítica
+            if (keywordsAlarma.some(k => lower.includes(k))) {
+                return "Siento muchísimo que estés pasando por un momento tan doloroso y oscuro. Tu vida es valiosa y no tienes que cargar con esto solo/a. Por favor, comunícate de inmediato con profesionales que te escucharán y apoyarán sin juzgarte:\n\n📞 Llama gratis al 135 (Línea de Prevención del Suicidio, disponible las 24 hs) o al 911 en caso de emergencia urgente.";
+            }
+
+            // 2. Ansiedad o estrés
+            if (lower.includes('ansiedad') || lower.includes('ansioso') || lower.includes('nervios') || lower.includes('estrés') || lower.includes('presión')) {
+                const respuestasAnsiedad = [
+                    "La ansiedad a veces nos hace sentir que todo va demasiado rápido. ¿Te gustaría que hagamos una pausa y nos enfoquemos en tu respiración un momento?",
+                    "Cuando hay tanta tensión acumulada en la cabeza, el cuerpo también se contrae. ¿Qué crees que es lo que más te está pesando en este momento?",
+                    "Es completamente normal sentirse abrumado/a cuando hay muchas demandas externas o internas. Tómate un respiro, aquí no hay apuro."
+                ];
+                return respuestasAnsiedad[Math.floor(Math.random() * respuestasAnsiedad.length)];
+            }
+
+            // 3. Tristeza o soledad
+            if (lower.includes('triste') || lower.includes('mal') || lower.includes('solo') || lower.includes('sola') || lower.includes('llorar') || lower.includes('vacío')) {
+                const respuestasTristeza = [
+                    "Lamento mucho que te sientas así hoy. A veces la tristeza llega sin avisar y lo único que pide es ser escuchada. Sigue escribiendo, te leo con atención.",
+                    "Está bien no estar bien todo el tiempo. No tienes que fingir que puedes con todo. ¿Hay algo específico que crees que desencadenó este sentimiento?",
+                    "Te mando un abrazo invisible a la distancia. Permítete sentir lo que venga, sin exigencias."
+                ];
+                return respuestasTristeza[Math.floor(Math.random() * respuestasTristeza.length)];
+            }
+
+            // 4. Respuestas universales / conversacionales generales
+            const respuestasGenerales = [
+                "Te entiendo perfectamente. A veces poner las palabras en un mensaje ayuda a ordenar el caos que se siente por dentro. ¿Cómo ha influido eso en tu día?",
+                "Gracias por compartirlo conmigo con tanta sinceridad. ¿Qué parte de todo esto es la que te genera más inquietud?",
+                "Es muy válido lo que piensas. Las emociones cambian de un momento a otro, y lo que sientes ahora es solo una parte de tu historia, no el final. ¿Quieres seguir contándome?",
+                "Interesante lo que mencionas. A veces nos exigimos demasiado. ¿Cómo podrías ser un poco más amable contigo mismo/a hoy?",
+                "Te leo. Sigue explayándote todo lo que necesites, este es un espacio seguro para ti.",
+                "Comprendo esa sensación. ¿Te ha pasado algo similar antes o es algo nuevo que estás experimentando?"
+            ];
+            
+            return respuestasGenerales[Math.floor(Math.random() * respuestasGenerales.length)];
         }
 
         function botResponse(userText) {
-            // Limpiar opciones rápidas al escribir libremente
-            quickReplies.style.display = 'none';
+            showTyping();
+            // Simular un tiempo de respuesta natural aleatorio (entre 1 y 1.5 segundos)
+            const tiempo = Math.random() * 500 + 1000;
 
-            // Simular un pequeño retraso de escritura realista
             setTimeout(() => {
-                if (checkKeywords(userText)) {
-                    appendMessage("⚠️ Siento mucho que estés cargando con tanto dolor en este momento. Por favor, comunícate ahora mismo con profesionales que pueden escucharte y sostenerte sin juzgarte:", 'bot');
-                    appendMessage("📞 Llama al 135 (Línea de Prevención del Suicidio y Salud Mental - Gratuita y 24 hs). O comunícate al 911 si estás en peligro inmediato. Tu vida importa.", 'bot');
-                } else if (userText.includes('ansiedad') || userText.includes('nervios')) {
-                    appendMessage("La ansiedad puede sentirse abrumadora en el cuerpo. Hagamos una pausa rápida: inhala profundamente en 4 segundos, mantén el aire 2 segundos y exhala despacio. ¿Te ayudo con otra técnica de respiración o prefieres contarme qué te genera tensión?", 'bot');
-                } else if (userText.includes('triste') || userText.includes('solo')) {
-                    appendMessage("Lamento mucho que te sientas así hoy. Está bien no estar bien todo el tiempo. Te estoy leyendo: desahógate todo lo que necesites por aquí.", 'bot');
-                } else {
-                    appendMessage("Te entiendo. A veces las emociones pesan demasiado y compartirlas ayuda a aliviar un poco la carga. Si en algún momento sientes que la situación te supera, recuerda que cuentas con el apoyo de la línea 135 las 24 horas. ¿En qué más te gustaría que te acompañe?", 'bot');
-                }
-            }, 600);
+                hideTyping();
+                const respuesta = generarRespuestaUniversal(userText);
+                appendMessage(respuesta, 'bot');
+            }, tiempo);
         }
 
         function sendMessage() {
@@ -314,33 +350,13 @@
 
             appendMessage(text, 'user');
             userInput.value = "";
+            
             botResponse(text);
         }
 
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 sendMessage();
-            }
-        }
-
-        function handleUserChoice(choice) {
-            quickReplies.style.display = 'none';
-            if (choice === 'ansiedad') {
-                appendMessage("Siento mucha ansiedad", 'user');
-                setTimeout(() => {
-                    appendMessage("Validamos ese momento. Vamos a frenar el piloto automático: intenta apoyar los pies firmemente en el suelo y nombra mentalmente 3 cosas que veas a tu alrededor. Eso ayuda a volver al presente.", 'bot');
-                    appendMessage("Si sientes que la angustia no cede, recuerda que puedes marcar al 135 para hablar con un especialista de forma confidencial.", 'bot');
-                }, 500);
-            } else if (choice === 'triste') {
-                appendMessage("Me siento triste o abrumado/a", 'user');
-                setTimeout(() => {
-                    appendMessage("Es totalmente válido sentirse así. Permitirte sentir la tristeza es parte de procesarla. No tienes que resolver todo hoy. Estoy aquí para leerte.", 'bot');
-                }, 500);
-            } else if (choice === 'hablar') {
-                appendMessage("Solo quiero desahogarme", 'user');
-                setTimeout(() => {
-                    appendMessage("Te escucho por completo. Escribe aquí todo lo que tengas en la cabeza sin filtro.", 'bot');
-                }, 500);
             }
         }
     </script>
