@@ -1,413 +1,348 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Michi & Dogui - Interactivo</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      -webkit-touch-callout: none;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espacio Calma - Asistencia y Orientación Emocional</title>
+    <style>
+        :root {
+            --primary: #4A7C59;
+            --primary-light: #688F75;
+            --bg-color: #F4F7F5;
+            --chat-bg: #FFFFFF;
+            --text-main: #2C3E35;
+            --alert-bg: #FFEBEE;
+            --alert-border: #E57373;
+            --alert-text: #C62828;
+        }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: linear-gradient(to bottom, #dbeafe 0%, #fef3c7 70%);
-      transition: background 1s ease;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    body.noche {
-      background: linear-gradient(to bottom, #1e1b4b 0%, #4c1d95 70%);
-    }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
 
-    body {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-      position: relative;
-    }
+        /* Franja de Emergencia Superior (Siempre visible) */
+        .emergency-banner {
+            background-color: var(--alert-bg);
+            border-bottom: 2px solid var(--alert-border);
+            color: var(--alert-text);
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 10;
+        }
 
-    /* Elementos del entorno */
-    .sol-luna {
-      position: absolute;
-      top: 25px;
-      right: 30px;
-      width: 55px;
-      height: 55px;
-      background: #f59e0b;
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow: 0 0 25px #fbbf24;
-      transition: all 0.5s ease;
-      z-index: 5;
-    }
+        .emergency-banner strong {
+            font-size: 1rem;
+        }
 
-    body.noche .sol-luna {
-      background: #e2e8f0;
-      box-shadow: 0 0 20px #cbd5e1;
-      border-radius: 50% 20% 50% 50%;
-    }
+        .btn-emergency {
+            background-color: var(--alert-text);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 4px;
+            font-size: 0.9rem;
+            width: fit-content;
+            align-self: center;
+        }
 
-    .fondo-nube {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 50px;
-      cursor: pointer;
-      z-index: 3;
-      transition: transform 0.3s ease;
-    }
+        .btn-emergency:hover {
+            background-color: #B71C1C;
+        }
 
-    .fondo-nube:hover { transform: scale(1.05); }
+        /* Cabecera del Chat */
+        .chat-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    .gota-lluvia {
-      position: absolute;
-      background: #38bdf8;
-      width: 3px;
-      height: 15px;
-      border-radius: 50%;
-      pointer-events: none;
-      animation: caerLluvia 0.8s linear infinite;
-      z-index: 4;
-    }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
 
-    @keyframes caerLluvia {
-      0% { transform: translateY(0); opacity: 1; }
-      100% { transform: translateY(350px); opacity: 0; }
-    }
+        .chat-header-info h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
 
-    .suelo-pasto {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 140px;
-      background: linear-gradient(to top, #86efac 0%, #bbf7d0 70%, transparent 100%);
-      border-radius: 50% 50% 0 0 / 30px 30px 0 0;
-      pointer-events: none;
-      z-index: 2;
-    }
+        .chat-header-info p {
+            font-size: 0.8rem;
+            opacity: 0.85;
+        }
 
-    body.noche .suelo-pasto {
-      background: linear-gradient(to top, #15803d 0%, #166534 70%, transparent 100%);
-    }
+        /* Contenedor de Mensajes */
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: var(--chat-bg);
+        }
 
-    .stage {
-      flex: 1;
-      width: 100%;
-      max-width: 400px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      z-index: 10;
-    }
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease;
+        }
 
-    .duo-container {
-      display: flex;
-      gap: 40px;
-      justify-content: center;
-      align-items: flex-end;
-      position: relative;
-      margin-bottom: 10px;
-    }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    .mascota-wrapper {
-      width: 130px;
-      height: 130px;
-      cursor: pointer;
-      position: relative;
-      pointer-events: auto;
-      filter: drop-shadow(0 12px 8px rgba(0,0,0,0.12));
-      animation: respirar 3s ease-in-out infinite;
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
+        .message.bot {
+            background-color: #EBF2ED;
+            color: var(--text-main);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
 
-    #michi-box { animation-delay: 0s; }
-    #dogui-box { animation-delay: 1.5s; }
+        .message.user {
+            background-color: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
 
-    @keyframes respirar {
-      0%, 100% { transform: translateY(0) scale(1, 1); }
-      50% { transform: translateY(-4px) scale(1.02, 0.98); }
-    }
+        /* Botones de Respuesta Rápida */
+        .quick-replies {
+            padding: 8px 16px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            background-color: var(--chat-bg);
+            white-space: nowrap;
+        }
 
-    /* Acciones visuales */
-    .mascota-wrapper.jump { animation: saltarVivo 0.5s ease; }
-    .mascota-wrapper.spin { animation: girarVivo 0.6s ease; }
-    .mascota-wrapper.shake { animation: mareoVivo 0.4s ease infinite; }
+        .quick-replies::-webkit-scrollbar {
+            display: none;
+        }
 
-    @keyframes saltarVivo {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-50px) scale(1.05, 0.95); }
-    }
+        .chip {
+            background-color: #E2ECE5;
+            color: var(--primary);
+            border: 1px solid var(--primary-light);
+            padding: 8px 14px;
+            border-radius: 16px;
+            font-size: 0.85krem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
 
-    @keyframes girarVivo {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+        .chip:hover {
+            background-color: var(--primary);
+            color: white;
+        }
 
-    @keyframes mareoVivo {
-      0%, 100% { transform: translateX(0) rotate(0deg); }
-      25% { transform: translateX(-8px) rotate(-8deg); }
-      75% { transform: translateX(8px) rotate(8deg); }
-    }
+        /* Barra de Entrada de Texto */
+        .chat-input-area {
+            padding: 12px 16px;
+            background-color: #F9FBF9;
+            border-top: 1px solid #E0E6E2;
+            display: flex;
+            gap: 8px;
+        }
 
-    .shadow-container {
-      display: flex;
-      gap: 70px;
-      justify-content: center;
-    }
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #CBD5D0;
+            border-radius: 24px;
+            outline: none;
+            font-size: 0.95rem;
+            background-color: white;
+        }
 
-    .shadow {
-      width: 80px;
-      height: 12px;
-      background: rgba(120, 53, 15, 0.22);
-      border-radius: 50%;
-      animation: sombraRespirar 3s ease-in-out infinite;
-    }
+        .chat-input-area input:focus {
+            border-color: var(--primary);
+        }
 
-    #shadow-2 { animation-delay: 1.5s; }
+        .chat-input-area button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
 
-    @keyframes sombraRespirar {
-      0%, 100% { transform: scale(1); opacity: 0.8; }
-      50% { transform: scale(0.85); opacity: 0.4; }
-    }
+        .chat-input-area button:hover {
+            background-color: var(--primary-light);
+        }
 
-    /* Juguetes interactivos flotantes abajo */
-    .juguetes-bar {
-      display: flex;
-      gap: 25px;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 12px 25px;
-      border-radius: 30px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      z-index: 20;
-      backdrop-filter: blur(5px);
-      margin-bottom: 10px;
-      border: 2px solid rgba(255,255,255,0.9);
-    }
-
-    .juguete {
-      font-size: 30px;
-      cursor: grab;
-      transition: transform 0.2s ease;
-      touch-action: none;
-    }
-
-    .juguete:active { cursor: grabbing; transform: scale(1.2); }
-
-    .particle {
-      position: absolute;
-      pointer-events: none;
-      animation: floatUp 1s forwards ease-out;
-      z-index: 30;
-      font-size: 26px;
-    }
-
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0) scale(0.8); }
-      100% { opacity: 0; transform: translateY(-70px) scale(1.4); }
-    }
-  </style>
+        /* Disclaimer inferior de privacidad */
+        .footer-disclaimer {
+            font-size: 0.7rem;
+            text-align: center;
+            color: #7A8A80;
+            padding: 6px;
+            background-color: #F4F7F5;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Entorno: Sol/Luna y Nubes -->
-  <div class="sol-luna" onclick="cambiarClima()" title="Cambiar clima"></div>
-  <div class="fondo-nube" style="width: 110px; height: 38px; top: 20%; left: 10%;" onclick="activarLluvia()" title="Hacer llover"></div>
-  <div class="fondo-nube" style="width: 90px; height: 32px; top: 15%; right: 25%;" onclick="activarLluvia()" title="Hacer llover"></div>
-  <div class="suelo-pasto"></div>
-
-  <div class="stage">
-    <div class="duo-container">
-      <!-- MICHI -->
-      <div class="mascota-wrapper" id="michi-box" onclick="tocarParte('michi', event)">
-        <svg viewBox="0 0 100 100" width="100%" height="100%">
-          <path d="M 75 75 Q 92 60 85 45" fill="none" stroke="#e67e22" stroke-width="5" stroke-linecap="round"/>
-          <ellipse cx="28" cy="78" rx="7" ry="5" fill="#ffffff" stroke="#d35400" stroke-width="1"/>
-          <ellipse cx="72" cy="78" rx="7" ry="5" fill="#ffffff" stroke="#d35400" stroke-width="1"/>
-          <polygon points="22,40 12,18 36,28" fill="#e67e22" stroke="#d35400" stroke-width="1.5"/>
-          <polygon points="24,36 17,22 33,28" fill="#f2a685"/>
-          <polygon points="78,40 88,18 64,28" fill="#e67e22" stroke="#d35400" stroke-width="1.5"/>
-          <polygon points="76,36 83,22 67,28" fill="#f2a685"/>
-          <ellipse cx="50" cy="58" rx="32" ry="28" fill="#e67e22" stroke="#d35400" stroke-width="2"/>
-          <path d="M 50 42 C 40 46 38 62 38 72 C 44 80 56 80 62 72 C 62 62 60 46 50 42 Z" fill="#ffffff"/>
-          <polygon points="48,59 52,59 50,62" fill="#e8a7a1"/>
-          <circle cx="37" cy="53" r="5" fill="#5c3d2e"/>
-          <circle cx="37" cy="53" r="3" fill="#1f110b"/>
-          <circle cx="35.5" cy="51.5" r="1.2" fill="#ffffff"/>
-          <circle cx="63" cy="53" r="5" fill="#5c3d2e"/>
-          <circle cx="63" cy="53" r="3" fill="#1f110b"/>
-          <circle cx="61.5" cy="51.5" r="1.2" fill="#ffffff"/>
-          <path d="M 45 64 Q 50 67 55 64" fill="none" stroke="#2c3e50" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </div>
-
-      <!-- DOGUI -->
-      <div class="mascota-wrapper" id="dogui-box" onclick="tocarParte('dogui', event)">
-        <svg viewBox="0 0 100 100" width="100%" height="100%">
-          <path d="M 28 42 C 18 50 22 72 30 70 C 35 68 35 55 33 45 Z" fill="#b45309" stroke="#78350f" stroke-width="1.5"/>
-          <path d="M 72 42 C 82 50 78 72 70 70 C 65 68 65 55 67 45 Z" fill="#b45309" stroke="#78350f" stroke-width="1.5"/>
-          <circle cx="50" cy="58" r="28" fill="#d97706" stroke="#78350f" stroke-width="2"/>
-          <circle cx="50" cy="42" r="22" fill="#d97706" stroke="#78350f" stroke-width="2"/>
-          <ellipse cx="50" cy="48" rx="11" ry="9" fill="#fefce8"/>
-          <ellipse cx="50" cy="46" rx="4" ry="3" fill="#1f110b"/>
-          <circle cx="39" cy="38" r="4" fill="#1f110b"/>
-          <circle cx="37.8" cy="36.8" r="1.2" fill="#ffffff"/>
-          <circle cx="61" cy="38" r="4" fill="#1f110b"/>
-          <circle cx="59.8" cy="36.8" r="1.2" fill="#ffffff"/>
-          <path d="M 45 53 Q 50 57 55 53" fill="none" stroke="#1f110b" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </div>
+    <!-- Banner de emergencia superior constante -->
+    <div class="emergency-banner">
+        <span>🚨 <strong>¿Crisis o pensamientos oscuros? No estás solo/a.</strong> Llama gratis y confidencial las 24 horas:</span>
+        <a href="tel:135" class="btn-emergency">📞 Llamar al 135</a>
     </div>
 
-    <div class="shadow-container">
-      <div class="shadow" id="shadow-1"></div>
-      <div class="shadow" id="shadow-2"></div>
+    <!-- Encabezado de la app -->
+    <div class="chat-header">
+        <div class="avatar">AC</div>
+        <div class="chat-header-info">
+            <h1>Espacio Calma</h1>
+            <p>Asistente virtual de orientación y contención</p>
+        </div>
     </div>
-  </div>
 
-  <!-- Juguetes interactivos para arrastrar -->
-  <div class="juguetes-bar">
-    <div class="juguete" id="toy-ball" draggable="true">⚽</div>
-    <div class="juguete" id="toy-food" draggable="true">🍖</div>
-  </div>
+    <!-- Mensajes del chat -->
+    <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+            Hola. Qué bueno que estés aquí. Este es un espacio seguro para frenar un momento, respirar y ordenar tus pensamientos. ¿Cómo te sientes en este instante?
+        </div>
+    </div>
 
-  <script>
-    const michiBox = document.getElementById('michi-box');
-    const doguiBox = document.getElementById('dogui-box');
-    const body = document.body;
+    <!-- Opciones rápidas para guiar al usuario -->
+    <div class="quick-replies" id="quickReplies">
+        <button class="chip" onclick="handleUserChoice('ansiedad')">🌊 Tengo mucha ansiedad</button>
+        <button class="chip" onclick="handleUserChoice('triste')">🌧️ Me siento triste o abrumado/a</button>
+        <button class="chip" onclick="handleUserChoice('hablar')">💬 Solo quiero desahogarme</button>
+    </div>
 
-    function spawnParticle(symbol, el) {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      p.innerText = symbol;
-      const rect = el.getBoundingClientRect();
-      p.style.left = (rect.left + rect.width / 2) + 'px';
-      p.style.top = (rect.top + rect.height / 2) + 'px';
-      document.body.appendChild(p);
-      setTimeout(() => p.remove(), 1000);
-    }
+    <!-- Campo de escritura -->
+    <div class="chat-input-area">
+        <input type="text" id="userInput" placeholder="Escribe cómo te sientes..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+    </div>
 
-    function animarMascota(el, clase) {
-      el.classList.remove('jump', 'spin');
-      void el.offsetWidth;
-      el.classList.add(clase);
-      setTimeout(() => el.classList.remove(clase), 600);
-    }
+    <div class="footer-disclaimer">
+        Esta herramienta no reemplaza la atención psicológica profesional.
+    </div>
 
-    // 1. Tocar por zonas de la mascota
-    function tocarParte(quien, event) {
-      const el = quien === 'michi' ? michiBox : doguiBox;
-      const rect = el.getBoundingClientRect();
-      const clickY = event.clientY - rect.top;
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const quickReplies = document.getElementById('quickReplies');
 
-      if (clickY < rect.height * 0.4) {
-        // Cabeza: Salto feliz y corazones
-        animarMascota(el, 'jump');
-        spawnParticle('💖', el);
-      } else if (clickY > rect.height * 0.7) {
-        // Colita: Giro divertido
-        animarMascota(el, 'spin');
-        spawnParticle('✨', el);
-      } else {
-        // Pancita: Risas / saltito doble
-        animarMascota(el, 'jump');
-        spawnParticle('😸', el);
-      }
-    }
+        // Palabras clave de alerta crítica para mostrar ayuda urgente
+        const keywordsAlarma = ['suicidio', 'morir', 'matar', 'no quiero vivir', 'no aguanto más', 'acabar con todo', 'desaparecer', 'colgar', 'pastillas'];
 
-    // 2. Entorno: Cambiar clima (Sol / Luna)
-    function cambiarClima() {
-      body.classList.toggle('noche');
-      spawnParticle(body.classList.contains('noche') ? '🌙' : '☀️', document.querySelector('.sol-luna'));
-    }
-
-    // 3. Entorno: Hacer llover al tocar las nubes
-    function activarLluvia() {
-      for (let i = 0; i < 12; i++) {
-        let gota = document.createElement('div');
-        gota.className = 'gota-lluvia';
-        gota.style.left = Math.random() * window.innerWidth + 'px';
-        gota.style.top = (Math.random() * 80) + 'px';
-        document.body.appendChild(gota);
-        setTimeout(() => gota.remove(), 800);
-      }
-      spawnParticle('☔', michiBox);
-    }
-
-    // 4. Gestos: Mareo por movimiento rápido del mouse / pantalla
-    let ultimoX = 0, ultimoY = 0, ultimoTiempo = Date.now();
-    window.addEventListener('mousemove', (e) => {
-      let ahora = Date.now();
-      if (ahora - ultimoTiempo > 100) {
-        let velocidad = Math.abs(e.clientX - ultimoX) + Math.abs(e.clientY - ultimoY);
-        if (velocidad > 150) {
-          michiBox.classList.add('shake');
-          doguiBox.classList.add('shake');
-          setTimeout(() => {
-            michiBox.classList.remove('shake');
-            doguiBox.classList.remove('shake');
-          }, 800);
-        }
-        ultimoX = e.clientX;
-        ultimoY = e.clientY;
-        ultimoTiempo = ahora;
-      }
-    });
-
-    // 5. Sistema de Arrastrar Juguetes (Drag & Drop táctil y mouse)
-    const juguetes = document.querySelectorAll('.juguete');
-    juguetes.forEach(juguete => {
-      let posX = 0, posY = 0, initialX = 0, initialY = 0;
-
-      juguete.addEventListener('pointerdown', dragStart);
-
-      function dragStart(e) {
-        initialX = e.clientX;
-        initialY = e.clientY;
-        juguete.style.position = 'relative';
-        juguete.style.zIndex = '100';
-        window.addEventListener('pointermove', drag);
-        window.addEventListener('pointerup', dragEnd);
-      }
-
-      function drag(e) {
-        posX = e.clientX - initialX;
-        posY = e.clientY - initialY;
-        juguete.style.transform = `translate(${posX}px, ${posY}px) scale(1.2)`;
-      }
-
-      function dragEnd(e) {
-        window.removeEventListener('pointermove', drag);
-        window.removeEventListener('pointerup', dragEnd);
-
-        // Detectar si soltó sobre alguna mascota
-        const rectMichi = michiBox.getBoundingClientRect();
-        const rectDogui = doguiBox.getBoundingClientRect();
-
-        if (e.clientX >= rectMichi.left && e.clientX <= rectMichi.right && e.clientY >= rectMichi.top && e.clientY <= rectMichi.bottom) {
-          animarMascota(michiBox, 'jump');
-          spawnParticle(juguete.innerText, michiBox);
-        } else if (e.clientX >= rectDogui.left && e.clientX <= rectDogui.right && e.clientY >= rectDogui.top && e.clientY <= rectDogui.bottom) {
-          animarMascota(doguiBox, 'jump');
-          spawnParticle(juguete.innerText, doguiBox);
+        function appendMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            messageDiv.textContent = text;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        juguete.style.transform = 'translate(0px, 0px) scale(1)';
-        juguete.style.zIndex = '20';
-      }
-    });
-  </script>
+        function checkKeywords(text) {
+            const lowerText = text.toLowerCase();
+            return keywordsAlarma.some(keyword => lowerText.includes(keyword));
+        }
+
+        function botResponse(userText) {
+            // Limpiar opciones rápidas al escribir libremente
+            quickReplies.style.display = 'none';
+
+            // Simular un pequeño retraso de escritura realista
+            setTimeout(() => {
+                if (checkKeywords(userText)) {
+                    appendMessage("⚠️ Siento mucho que estés cargando con tanto dolor en este momento. Por favor, comunícate ahora mismo con profesionales que pueden escucharte y sostenerte sin juzgarte:", 'bot');
+                    appendMessage("📞 Llama al 135 (Línea de Prevención del Suicidio y Salud Mental - Gratuita y 24 hs). O comunícate al 911 si estás en peligro inmediato. Tu vida importa.", 'bot');
+                } else if (userText.includes('ansiedad') || userText.includes('nervios')) {
+                    appendMessage("La ansiedad puede sentirse abrumadora en el cuerpo. Hagamos una pausa rápida: inhala profundamente en 4 segundos, mantén el aire 2 segundos y exhala despacio. ¿Te ayudo con otra técnica de respiración o prefieres contarme qué te genera tensión?", 'bot');
+                } else if (userText.includes('triste') || userText.includes('solo')) {
+                    appendMessage("Lamento mucho que te sientas así hoy. Está bien no estar bien todo el tiempo. Te estoy leyendo: desahógate todo lo que necesites por aquí.", 'bot');
+                } else {
+                    appendMessage("Te entiendo. A veces las emociones pesan demasiado y compartirlas ayuda a aliviar un poco la carga. Si en algún momento sientes que la situación te supera, recuerda que cuentas con el apoyo de la línea 135 las 24 horas. ¿En qué más te gustaría que te acompañe?", 'bot');
+                }
+            }, 600);
+        }
+
+        function sendMessage() {
+            const text = userInput.value.trim();
+            if (text === "") return;
+
+            appendMessage(text, 'user');
+            userInput.value = "";
+            botResponse(text);
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function handleUserChoice(choice) {
+            quickReplies.style.display = 'none';
+            if (choice === 'ansiedad') {
+                appendMessage("Siento mucha ansiedad", 'user');
+                setTimeout(() => {
+                    appendMessage("Validamos ese momento. Vamos a frenar el piloto automático: intenta apoyar los pies firmemente en el suelo y nombra mentalmente 3 cosas que veas a tu alrededor. Eso ayuda a volver al presente.", 'bot');
+                    appendMessage("Si sientes que la angustia no cede, recuerda que puedes marcar al 135 para hablar con un especialista de forma confidencial.", 'bot');
+                }, 500);
+            } else if (choice === 'triste') {
+                appendMessage("Me siento triste o abrumado/a", 'user');
+                setTimeout(() => {
+                    appendMessage("Es totalmente válido sentirse así. Permitirte sentir la tristeza es parte de procesarla. No tienes que resolver todo hoy. Estoy aquí para leerte.", 'bot');
+                }, 500);
+            } else if (choice === 'hablar') {
+                appendMessage("Solo quiero desahogarme", 'user');
+                setTimeout(() => {
+                    appendMessage("Te escucho por completo. Escribe aquí todo lo que tengas en la cabeza sin filtro.", 'bot');
+                }, 500);
+            }
+        }
+    </script>
 </body>
 </html>
