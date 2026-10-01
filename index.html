@@ -2,13 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espacio Calma - Apoyo Emocional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Espacio Calma - Asistencia y Orientación Emocional</title>
     <style>
         :root {
             --primary: #4A7C59;
             --primary-light: #688F75;
-            --bg-color: #F4F7F5;
+            --bg-color: #EBF2ED;
             --chat-bg: #FFFFFF;
             --text-main: #2C3E35;
             --alert-bg: #FFEBEE;
@@ -29,9 +29,31 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            max-width: 600px;
-            margin: 0 auto;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            height: 100dvh; /* Adaptable a barras de móviles */
+            margin: 0;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Contenedor principal adaptable (Responsive Móvil y PC) */
+        .chat-container {
+            width: 100%;
+            height: 100%;
+            max-width: 650px;
+            max-height: 100vh;
+            background-color: var(--chat-bg);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        @media (min-width: 768px) {
+            .chat-container {
+                height: 85vh;
+                max-height: 800px;
+                border-radius: 16px;
+                overflow: hidden;
+            }
         }
 
         /* Franja de Emergencia Superior */
@@ -41,7 +63,7 @@
             color: var(--alert-text);
             padding: 10px 16px;
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             display: flex;
             flex-direction: column;
             gap: 4px;
@@ -52,14 +74,13 @@
             background-color: var(--alert-text);
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 4px 10px;
             border-radius: 20px;
             font-weight: bold;
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
-            margin-top: 2px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             width: fit-content;
             align-self: center;
         }
@@ -72,15 +93,15 @@
         .chat-header {
             background-color: var(--primary);
             color: white;
-            padding: 16px;
+            padding: 14px 16px;
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
         .avatar {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             background-color: white;
             color: var(--primary);
             border-radius: 50%;
@@ -88,16 +109,16 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
 
         .chat-header-info h1 {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 600;
         }
 
         .chat-header-info p {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             opacity: 0.85;
         }
 
@@ -109,16 +130,17 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            background-color: var(--chat-bg);
+            background-color: #FFFFFF;
         }
 
         .message {
-            max-width: 80%;
+            max-width: 82%;
             padding: 12px 16px;
             border-radius: 14px;
-            font-size: 0.95rem;
-            line-height: 1.4;
+            font-size: 0.93rem;
+            line-height: 1.45;
             animation: fadeIn 0.3s ease;
+            white-space: pre-line;
         }
 
         @keyframes fadeIn {
@@ -127,7 +149,7 @@
         }
 
         .message.bot {
-            background-color: #EBF2ED;
+            background-color: #F0F5F1;
             color: var(--text-main);
             align-self: flex-start;
             border-bottom-left-radius: 4px;
@@ -140,19 +162,51 @@
             border-bottom-right-radius: 4px;
         }
 
+        /* Opciones rápidas interactivas */
+        .quick-replies {
+            padding: 10px 16px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            background-color: #FAFCFA;
+            border-top: 1px solid #EDF2EE;
+            white-space: nowrap;
+        }
+
+        .quick-replies::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chip {
+            background-color: #E2ECE5;
+            color: var(--primary);
+            border: 1px solid var(--primary-light);
+            padding: 7px 14px;
+            border-radius: 16px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .chip:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
         /* Indicador de escritura animado */
         .typing-indicator {
             display: none;
             align-self: flex-start;
-            background-color: #EBF2ED;
+            background-color: #F0F5F1;
             padding: 10px 14px;
             border-radius: 14px;
             border-bottom-left-radius: 4px;
         }
 
         .typing-dots span {
-            height: 7px;
-            width: 7px;
+            height: 6px;
+            width: 6px;
             float: left;
             margin: 0 2px;
             background-color: var(--primary-light);
@@ -176,15 +230,16 @@
             border-top: 1px solid #E0E6E2;
             display: flex;
             gap: 8px;
+            align-items: center;
         }
 
         .chat-input-area input {
             flex: 1;
-            padding: 12px 16px;
+            padding: 11px 16px;
             border: 1px solid #CBD5D0;
             border-radius: 24px;
             outline: none;
-            font-size: 0.95rem;
+            font-size: 0.93rem;
             background-color: white;
         }
 
@@ -196,14 +251,15 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: background 0.2s;
+            flex-shrink: 0;
         }
 
         .chat-input-area button:hover {
@@ -211,62 +267,73 @@
         }
 
         .footer-disclaimer {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             text-align: center;
             color: #7A8A80;
             padding: 6px;
-            background-color: #F4F7F5;
+            background-color: #F9FBF9;
+            border-top: 1px solid #EEF3EF;
         }
     </style>
 </head>
 <body>
 
-    <!-- Franja de emergencia superior constante -->
-    <div class="emergency-banner">
-        <span>🚨 ¿Necesitas hablar urgente con un profesional? Línea confidencial 24 hs:</span>
-        <a href="tel:135" class="btn-emergency">📞 Llamar al 135</a>
-    </div>
-
-    <!-- Encabezado de la app -->
-    <div class="chat-header">
-        <div class="avatar">AC</div>
-        <div class="chat-header-info">
-            <h1>Espacio Calma</h1>
-            <p>Conversación abierta y de contención</p>
+    <div class="chat-container">
+        <!-- Franja de emergencia superior constante -->
+        <div class="emergency-banner">
+            <span>🚨 ¿Crisis o angustia profunda? Línea gratuita y confidencial 24 hs:</span>
+            <a href="tel:135" class="btn-emergency">📞 Llamar al 135</a>
         </div>
-    </div>
 
-    <!-- Mensajes del chat -->
-    <div class="chat-messages" id="chatMessages">
-        <div class="message bot">
-            Hola. Este es un espacio totalmente libre para expresarte. Puedes contarme cómo ha sido tu día, qué te preocupa o simplemente escribir lo que necesites sacar de tu mente. Te leo.
-        </div>
-        <!-- Indicador de escritura -->
-        <div class="typing-indicator" id="typingIndicator">
-            <div class="typing-dots">
-                <span></span><span></span><span></span>
+        <!-- Encabezado de la app -->
+        <div class="chat-header">
+            <div class="avatar">AC</div>
+            <div class="chat-header-info">
+                <h1>Espacio Calma</h1>
+                <p>Orientación y apoyo emocional</p>
             </div>
         </div>
-    </div>
 
-    <!-- Campo de escritura libre -->
-    <div class="chat-input-area">
-        <input type="text" id="userInput" placeholder="Escribe aquí con total libertad..." onkeypress="handleKeyPress(event)">
-        <button onclick="sendMessage()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-        </button>
-    </div>
+        <!-- Mensajes del chat -->
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                Hola. Qué bueno que estés aquí. Este es un espacio seguro para hacer una pausa, respirar y ordenar tus pensamientos. ¿Cómo te sientes en este instante?
+            </div>
+            <!-- Indicador de escritura -->
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dots">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
 
-    <div class="footer-disclaimer">
-        Herramienta de apoyo emocional. No reemplaza la terapia psicológica profesional.
+        <!-- Opciones rápidas de guía -->
+        <div class="quick-replies" id="quickReplies">
+            <button class="chip" onclick="handleChoice('ansiedad')">🌊 Tengo mucha ansiedad</button>
+            <button class="chip" onclick="handleChoice('tristeza')">🌧️ Me siento triste o abrumado/a</button>
+            <button class="chip" onclick="handleChoice('desahogo')">💬 Solo quiero desahogarme</button>
+        </div>
+
+        <!-- Campo de escritura -->
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Escribe aquí lo que sientes..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+        </div>
+
+        <div class="footer-disclaimer">
+            Esta herramienta no reemplaza la atención psicológica profesional.
+        </div>
     </div>
 
     <script>
         const chatMessages = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
         const typingIndicator = document.getElementById('typingIndicator');
+        const quickReplies = document.getElementById('quickReplies');
 
-        // Palabras de riesgo / emergencia crítica
+        // Palabras de alerta de emergencia crítica
         const keywordsAlarma = ['suicidio', 'morir', 'matar', 'no quiero vivir', 'no aguanto más', 'acabar con todo', 'desaparecer', 'colgar', 'pastillas', 'quitarme la vida'];
 
         function appendMessage(text, sender) {
@@ -290,56 +357,54 @@
             typingIndicator.style.display = 'none';
         }
 
-        // Sistema inteligente para generar respuestas abiertas y variadas
-        function generarRespuestaUniversal(texto) {
+        // Motor inteligente conversacional (variado y dinámico tipo IA)
+        function generarRespuesta(texto) {
             const lower = texto.toLowerCase();
 
-            // 1. Detección de emergencia o crisis crítica
+            // 1. Detección de crisis extrema
             if (keywordsAlarma.some(k => lower.includes(k))) {
-                return "Siento muchísimo que estés pasando por un momento tan doloroso y oscuro. Tu vida es valiosa y no tienes que cargar con esto solo/a. Por favor, comunícate de inmediato con profesionales que te escucharán y apoyarán sin juzgarte:\n\n📞 Llama gratis al 135 (Línea de Prevención del Suicidio, disponible las 24 hs) o al 911 en caso de emergencia urgente.";
+                return "Siento muchísimo que estés pasando por un dolor tan fuerte en este momento. Tu vida importa y hay profesionales preparados para escucharte sin juzgarte:\n\n📞 Llama gratis al 135 (Línea de Prevención del Suicidio, disponible las 24 hs) o comunícate al 911 si estás en riesgo inmediato.";
             }
 
-            // 2. Ansiedad o estrés
-            if (lower.includes('ansiedad') || lower.includes('ansioso') || lower.includes('nervios') || lower.includes('estrés') || lower.includes('presión')) {
-                const respuestasAnsiedad = [
-                    "La ansiedad a veces nos hace sentir que todo va demasiado rápido. ¿Te gustaría que hagamos una pausa y nos enfoquemos en tu respiración un momento?",
-                    "Cuando hay tanta tensión acumulada en la cabeza, el cuerpo también se contrae. ¿Qué crees que es lo que más te está pesando en este momento?",
-                    "Es completamente normal sentirse abrumado/a cuando hay muchas demandas externas o internas. Tómate un respiro, aquí no hay apuro."
+            // 2. Ansiedad o nervios
+            if (lower.includes('ansiedad') || lower.includes('ansioso') || lower.includes('nervios') || lower.includes('estrés') || lower.includes('ataque')) {
+                const respuestas = [
+                    "La ansiedad puede sentirse muy intensa en el cuerpo. Hagamos una pequeña pausa: apoya los pies firmemente en el suelo, inhala lento en 4 segundos y exhala despacio. ¿Te ayuda saber qué está detonando esta tensión?",
+                    "Cuando hay sobrecarga mental, la respiración se acorta. Intenta exhalar el aire más lento de lo que lo inhalaste. Estoy aquí contigo, cuéntame qué te genera esta presión.",
+                    "Es normal que el cuerpo reaccione así ante la exigencia. Tómate un segundo. ¿Qué es lo que más te abruma ahora mismo?"
                 ];
-                return respuestasAnsiedad[Math.floor(Math.random() * respuestasAnsiedad.length)];
+                return respuestas[Math.floor(Math.random() * respuestas.length)];
             }
 
             // 3. Tristeza o soledad
             if (lower.includes('triste') || lower.includes('mal') || lower.includes('solo') || lower.includes('sola') || lower.includes('llorar') || lower.includes('vacío')) {
-                const respuestasTristeza = [
-                    "Lamento mucho que te sientas así hoy. A veces la tristeza llega sin avisar y lo único que pide es ser escuchada. Sigue escribiendo, te leo con atención.",
-                    "Está bien no estar bien todo el tiempo. No tienes que fingir que puedes con todo. ¿Hay algo específico que crees que desencadenó este sentimiento?",
-                    "Te mando un abrazo invisible a la distancia. Permítete sentir lo que venga, sin exigencias."
+                const respuestas = [
+                    "Lamento mucho que te sientas así hoy. A veces la tristeza solo necesita ser escuchada y validada. Sigue escribiendo todo lo que necesites sacar.",
+                    "Está bien no estar bien todo el tiempo. No tienes que cargar con todo tú solo/a. ¿Hay algo específico que te haya dejado esta sensación?",
+                    "Te mando un espacio de calma virtual. Permítete sentir sin juzgarte. Estoy aquí para leerte."
                 ];
-                return respuestasTristeza[Math.floor(Math.random() * respuestasTristeza.length)];
+                return respuestas[Math.floor(Math.random() * respuestas.length)];
             }
 
-            // 4. Respuestas universales / conversacionales generales
+            // 4. Respuestas generales universales
             const respuestasGenerales = [
-                "Te entiendo perfectamente. A veces poner las palabras en un mensaje ayuda a ordenar el caos que se siente por dentro. ¿Cómo ha influido eso en tu día?",
-                "Gracias por compartirlo conmigo con tanta sinceridad. ¿Qué parte de todo esto es la que te genera más inquietud?",
-                "Es muy válido lo que piensas. Las emociones cambian de un momento a otro, y lo que sientes ahora es solo una parte de tu historia, no el final. ¿Quieres seguir contándome?",
-                "Interesante lo que mencionas. A veces nos exigimos demasiado. ¿Cómo podrías ser un poco más amable contigo mismo/a hoy?",
-                "Te leo. Sigue explayándote todo lo que necesites, este es un espacio seguro para ti.",
-                "Comprendo esa sensación. ¿Te ha pasado algo similar antes o es algo nuevo que estás experimentando?"
+                "Te entiendo perfectamente. Poner en palabras lo que pasa por dentro ayuda a aligerar el peso. ¿Cómo ha influido eso en tu día?",
+                "Gracias por compartirlo con sinceridad. A veces nos exigimos demasiado. ¿Cómo podrías ser un poco más amable contigo mismo/a en este momento?",
+                "Comprendo esa sensación. Las emociones van cambiando, y lo que sientes ahora es solo una parte de tu día, no el final. ¿Quieres seguir contándome?",
+                "Te leo con atención. Explayate todo lo que necesites, este espacio es seguro para ti.",
+                "Es muy válido lo que piensas. ¿Te ha pasado algo similar antes o es algo nuevo que estás procesando?"
             ];
-            
+
             return respuestasGenerales[Math.floor(Math.random() * respuestasGenerales.length)];
         }
 
-        function botResponse(userText) {
+        function botProcess(textoUsuario) {
             showTyping();
-            // Simular un tiempo de respuesta natural aleatorio (entre 1 y 1.5 segundos)
-            const tiempo = Math.random() * 500 + 1000;
+            const tiempo = Math.random() * 400 + 900; // Retraso natural
 
             setTimeout(() => {
                 hideTyping();
-                const respuesta = generarRespuestaUniversal(userText);
+                const respuesta = generarRespuesta(textoUsuario);
                 appendMessage(respuesta, 'bot');
             }, tiempo);
         }
@@ -350,14 +415,30 @@
 
             appendMessage(text, 'user');
             userInput.value = "";
-            
-            botResponse(text);
+            botProcess(text);
         }
 
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 sendMessage();
             }
+        }
+
+        // Manejo de las opciones rápidas iniciales
+        function handleChoice(tipo) {
+            if (tipo === 'ansiedad') {
+                appendMessage("🌊 Tengo mucha ansiedad", 'user');
+                botProcess("ansiedad");
+            } else if (tipo === 'tristeza') {
+                appendMessage("🌧️ Me siento triste o abrumado/a", 'user');
+                botProcess("tristeza");
+            } else if (tipo === 'desahogo') {
+                appendMessage("💬 Solo quiero desahogarme", 'user');
+                setTimeout(() => {
+                    appendMessage("Te escucho por completo. Escribe aquí todo lo que tengas en la cabeza sin filtro, te leo.", 'bot');
+                }, 500);
+            }
+            // Ocultar opcionalmente o dejar los botones accesibles
         }
     </script>
 </body>
