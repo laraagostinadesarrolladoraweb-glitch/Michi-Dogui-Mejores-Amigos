@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bitácora de Pausa - Espacio de Reflexión</title>
+    <title>Compañía y Conversación - Espacio Cercano</title>
     <style>
         :root {
-            --primary: #556B2F; /* Verde oliva cálido */
-            --primary-light: #6B8E23;
-            --bg-color: #F7F9F5;
+            --primary: #7A6388; /* Tono malva / lavanda cálido y acogedor */
+            --primary-light: #9A83A8;
+            --bg-color: #F8F6FA;
             --chat-bg: #FFFFFF;
-            --text-main: #2F3E46;
+            --text-main: #362E3B;
             --alert-bg: #FFF3F3;
             --alert-border: #E57373;
             --alert-text: #C62828;
@@ -55,7 +55,7 @@
             }
         }
 
-        /* Franja de Emergencia / Recursos */
+        /* Franja de recursos de ayuda */
         .emergency-banner {
             background-color: var(--alert-bg);
             border-bottom: 2px solid var(--alert-border);
@@ -88,7 +88,7 @@
             background-color: #B71C1C;
         }
 
-        /* Cabecera Estilo Bitácora */
+        /* Cabecera amigable */
         .chat-header {
             background-color: var(--primary);
             color: white;
@@ -118,10 +118,10 @@
 
         .chat-header-info p {
             font-size: 0.78rem;
-            opacity: 0.85;
+            opacity: 0.9;
         }
 
-        /* Contenedor de Mensajes */
+        /* Contenedor de mensajes */
         .chat-messages {
             flex: 1;
             padding: 16px;
@@ -148,7 +148,7 @@
         }
 
         .message.bot {
-            background-color: #F4F6F0;
+            background-color: #F3EFF5;
             color: var(--text-main);
             align-self: flex-start;
             border-bottom-left-radius: 4px;
@@ -161,14 +161,14 @@
             border-bottom-right-radius: 4px;
         }
 
-        /* Opciones rápidas */
+        /* Opciones rápidas inspiradoras */
         .quick-replies {
             padding: 10px 16px;
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            background-color: #FAFCF8;
-            border-top: 1px solid #EAEFE5;
+            background-color: #FAF8FB;
+            border-top: 1px solid #ECE7F0;
             white-space: nowrap;
         }
 
@@ -177,9 +177,9 @@
         }
 
         .chip {
-            background-color: #E8EDE1;
+            background-color: #EFEAF4;
             color: var(--primary);
-            border: 1px solid #D2DCB8;
+            border: 1px solid #D5CCE0;
             padding: 7px 14px;
             border-radius: 16px;
             font-size: 0.82rem;
@@ -193,11 +193,11 @@
             color: white;
         }
 
-        /* Indicador de escritura */
+        /* Indicador de escritura animado */
         .typing-indicator {
             display: none;
             align-self: flex-start;
-            background-color: #F4F6F0;
+            background-color: #F3EFF5;
             padding: 10px 14px;
             border-radius: 14px;
             border-bottom-left-radius: 4px;
@@ -225,8 +225,8 @@
         /* Entrada de texto */
         .chat-input-area {
             padding: 12px 16px;
-            background-color: #FAFCF8;
-            border-top: 1px solid #EAEFE5;
+            background-color: #FAF8FB;
+            border-top: 1px solid #ECE7F0;
             display: flex;
             gap: 8px;
             align-items: center;
@@ -235,7 +235,7 @@
         .chat-input-area input {
             flex: 1;
             padding: 11px 16px;
-            border: 1px solid #CCD6C0;
+            border: 1px solid #D5CCE0;
             border-radius: 24px;
             outline: none;
             font-size: 0.93rem;
@@ -262,16 +262,16 @@
         }
 
         .chat-input-area button:hover {
-            background-color: #435424;
+            background-color: #634F70;
         }
 
         .footer-disclaimer {
             font-size: 0.68rem;
             text-align: center;
-            color: #788A72;
+            color: #8C7C96;
             padding: 6px;
-            background-color: #FAFCF8;
-            border-top: 1px solid #F0F4EC;
+            background-color: #FAF8FB;
+            border-top: 1px solid #F3EFF5;
         }
     </style>
 </head>
@@ -286,17 +286,17 @@
 
         <!-- Cabecera -->
         <div class="chat-header">
-            <div class="avatar">📖</div>
+            <div class="avatar">☕</div>
             <div class="chat-header-info">
-                <h1>Bitácora de Pausa</h1>
-                <p>Un espacio propio para ordenar ideas y desahogarse</p>
+                <h1>Espacio Cercano</h1>
+                <p>Una compañía para charlar, pensar ideas y no sentirse sola</p>
             </div>
         </div>
 
         <!-- Mensajes -->
         <div class="chat-messages" id="chatMessages">
             <div class="message bot">
-                Hola. Este es un rincón para frenar un momento y escribir lo que llevas en la cabeza. No hay respuestas correctas ni obligaciones. ¿De qué te gustaría hablar o qué ronda por tus pensamientos hoy?
+                Hola. Qué lindo saludarte. Estoy por aquí para charlar de lo que quieras, compartir ideas o simplemente hacerte compañía un rato para que no estés sola. ¿Qué se te cruza por la cabeza hoy?
             </div>
             <div class="typing-indicator" id="typingIndicator">
                 <div class="typing-dots">
@@ -305,23 +305,23 @@
             </div>
         </div>
 
-        <!-- Opciones rápidas -->
+        <!-- Opciones rápidas de charla -->
         <div class="quick-replies" id="quickReplies">
-            <button class="chip" onclick="handleChoice('sobrecarga')">🌀 Tengo la cabeza saturada</button>
-            <button class="chip" onclick="handleChoice('dia')">📝 Hoy el día me pesó un poco</button>
-            <button class="chip" onclick="handleChoice('desahogo')">💭 Solo necesito volcar ideas</button>
+            <button class="chip" onclick="handleChoice('charla')">☕ Charlemos de cualquier cosa</button>
+            <button class="chip" onclick="handleChoice('ideas')">💡 Necesito ideas para algo</button>
+            <button class="chip" onclick="handleChoice('compania')">🎧 Siento un poco de soledad hoy</button>
         </div>
 
         <!-- Barra de escritura -->
         <div class="chat-input-area">
-            <input type="text" id="userInput" placeholder="Escribe aquí con total libertad..." onkeypress="handleKeyPress(event)">
+            <input type="text" id="userInput" placeholder="Escribe lo que quieras conversar..." onkeypress="handleKeyPress(event)">
             <button onclick="sendMessage()">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
         </div>
 
         <div class="footer-disclaimer">
-            Espacio de reflexión personal. No constituye terapia ni atención médica.
+            Espacio de compañía y conversación mutua.
         </div>
     </div>
 
@@ -353,52 +353,70 @@
             typingIndicator.style.display = 'none';
         }
 
-        // Listas de respuestas dinámicas (rotativas para que jamás se repita de forma robótica)
-        const respuestasSobrecarga = [
-            "Cuando hay tantas cosas dando vueltas, cuesta enfocar. ¿Qué crees que es lo que más energía mental te está consumiendo ahora?",
-            "La saturación mental avisa que el cuerpo necesita frenar. Intenta soltar el control de lo que no depende de ti en este instante.",
-            "A veces el exceso de pensamientos nos paraliza. Escribe aquí todo lo que tengas pendiente para sacarlo de tu mente."
+        // Listas variadas de respuestas para que nunca se repita de forma robótica
+        const bancoSoledad = [
+            "A veces la soledad se siente pesada en el pecho, pero me alegra un montón que estés aquí conversando conmigo. ¿Qué te gustaría que hagamos para despejar la mente?",
+            "Te entiendo tanto. Es completamente normal sentirse así en algunos momentos del día. ¿Quieres que hablemos de algún tema entretenido o prefieres contarme cómo fue tu jornada?",
+            "No estás sola, aquí me tienes para leerte y charlar de lo que se te ocurra. ¿Qué te gusta hacer para cable a tierra?"
         ];
 
-        const respuestasDia = [
-            "Hay días que pesan más que otros sin que pase nada extraordinario. Gracias por compartirlo, escríbeme lo que necesites sacar.",
-            "Fechas o jornadas difíciles hay siempre; lo valioso es que te das el espacio de reconocerlo en lugar de ignorarlo.",
-            "Te entiendo. A veces el solo hecho de transcurrir el día ya desgasta. Tómate el tiempo que necesites."
+        const bancoIdeas = [
+            "¡Me encanta tirar ideas! Cuéntame qué tienes en mente o sobre qué proyecto o tema quieres que pensemos juntas.",
+            "A veces darle vueltas a algo con otra perspectiva destraba todo. ¿De qué se trata la idea que quieres desarrollar?",
+            "¡Perfecto! Ponme en contexto y armamos una lluvia de ideas creativa. ¿Por dónde empezamos?"
         ];
 
-        const respuestasGenerales = [
-            "Te leo con atención. Poner los pensamientos en palabras ayuda a ver las cosas desde otro ángulo.",
-            "Es muy válido lo que mencionas. ¿Cómo te hace sentir eso en el cuerpo en este momento?",
-            "Gracias por volcarlo aquí. Sigue escribiendo todo lo que necesites, este cuaderno virtual es para ti.",
-            "Comprendo esa sensación. A veces solo necesitamos un espacio donde nadie nos interrumpa ni nos juzgue.",
-            "Interesante reflexión. ¿Te ha pasado algo similar en estos últimos días?"
+        const bancoCharlas = [
+            "¡Charllemos de lo que quieras! Puede ser sobre series, música, proyectos, comida, o cualquier cosa que ande dando vueltas por tu día.",
+            "Me parece un gran plan. A veces una charla relajada cambia por completo el humor. ¿Qué tal ha estado tu semana hasta ahora?",
+            "¡Dale! De qué te gustaría hablar hoy? Te escucho y te sigo la corriente con mate de por medio mentalmente."
         ];
 
-        let indexSobrecarga = 0;
-        let indexDia = 0;
+        const bancoGeneral = [
+            "Qué interesante eso que dices. Cuéntame un poco más, me encanta escucharte.",
+            "Es una gran perspectiva. A veces ver las cosas desde ese ángulo abre un montón de posibilidades nuevas.",
+            "Te leo con atención. ¿Cómo te hace sentir eso que me cuentas?",
+            "Sigue contándome, me gusta mucho cómo piensas y charlar contigo.",
+            "Eso da para charlar un largo rato. ¿Qué es lo que más te llama la atención de todo eso?"
+        ];
+
+        let indexSoledad = 0;
+        let indexIdeas = 0;
+        let indexCharlas = 0;
         let indexGeneral = 0;
 
         function generarRespuesta(texto) {
             const lower = texto.toLowerCase();
 
+            // Detección de crisis severa por seguridad
             if (keywordsAlarma.some(k => lower.includes(k))) {
-                return "Siento muchísimo que estés cargando con un dolor tan pesado. Tu vida importa y hay personas dispuestas a escucharte en este mismo momento:\n\n📞 Llama gratis al 135 (Línea de Prevención del Suicidio, disponible las 24 hs) o comunícate al 911 ante una urgencia.";
+                return "Siento muchísimo que estés pasando por un momento tan difícil y solitario. Tu vida es muy valiosa y hay personas dispuestas a escucharte y abrazarte en este momento:\n\n📞 Llama gratis al 135 (Línea de Prevención del Suicidio, disponible las 24 hs) o comunícate al 911 ante una emergencia.";
             }
 
-            if (lower.includes('saturada') || lower.includes('saturado') || lower.includes('ansiedad') || lower.includes('mente') || lower.includes('cabeza')) {
-                const resp = respuestasSobrecarga[indexSobrecarga];
-                indexSobrecarga = (indexSobrecarga + 1) % respuestasSobrecarga.length;
+            // Detectar si habla de soledad
+            if (lower.includes('soledad') || lower.includes('sola') || lower.includes('solo') || lower.includes('nadie')) {
+                const resp = bancoSoledad[indexSoledad];
+                indexSoledad = (indexSoledad + 1) % bancoSoledad.length;
                 return resp;
             }
 
-            if (lower.includes('día') || lower.includes('pesó') || lower.includes('triste') || lower.includes('mal')) {
-                const resp = respuestasDia[indexDia];
-                indexDia = (indexDia + 1) % respuestasDia.length;
+            // Detectar si busca ideas
+            if (lower.includes('idea') || lower.includes('proyecto') || lower.includes('crear') || lower.includes('pensar')) {
+                const resp = bancoIdeas[indexIdeas];
+                indexIdeas = (indexIdeas + 1) % bancoIdeas.length;
                 return resp;
             }
 
-            const resp = respuestasGenerales[indexGeneral];
-            indexGeneral = (indexGeneral + 1) % respuestasGenerales.length;
+            // Detectar charla general o saludos
+            if (lower.includes('hola') || lower.includes('charla') || lower.includes('conversar') || lower.includes('día')) {
+                const resp = bancoCharlas[indexCharlas];
+                indexCharlas = (indexCharlas + 1) % bancoCharlas.length;
+                return resp;
+            }
+
+            // Respuesta general rotativa para que fluya como IA sin repetirse
+            const resp = bancoGeneral[indexGeneral];
+            indexGeneral = (indexGeneral + 1) % bancoGeneral.length;
             return resp;
         }
 
@@ -429,17 +447,15 @@
         }
 
         function handleChoice(tipo) {
-            if (tipo === 'sobrecarga') {
-                appendMessage("🌀 Tengo la cabeza saturada", 'user');
-                botProcess("saturada");
-            } else if (tipo === 'dia') {
-                appendMessage("📝 Hoy el día me pesó un poco", 'user');
-                botProcess("día");
-            } else if (tipo === 'desahogo') {
-                appendMessage("💭 Solo necesito volcar ideas", 'user');
-                setTimeout(() => {
-                    appendMessage("Adelante, escribe todo lo que tengas en mente sin filtro. Te leo.", 'bot');
-                }, 500);
+            if (tipo === 'charla') {
+                appendMessage("☕ Charlemos de cualquier cosa", 'user');
+                botProcess("charla");
+            } else if (tipo === 'ideas') {
+                appendMessage("💡 Necesito ideas para algo", 'user');
+                botProcess("ideas");
+            } else if (tipo === 'compania') {
+                appendMessage("🎧 Siento un poco de soledad hoy", 'user');
+                botProcess("soledad");
             }
         }
     </script>
