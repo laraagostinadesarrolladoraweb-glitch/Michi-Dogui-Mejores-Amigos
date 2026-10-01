@@ -2,208 +2,240 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espacio Calma - Tablero de Micro-Pausas</title>
-    <!-- Tailwind CSS para un diseño limpio y moderno -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Espacio Calma - Escritura y Liberación</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+        :root {
+            --bg-color: #F7F5F0;
+            --card-bg: #FFFFFF;
+            --primary: #8C7B70;
+            --primary-hover: #6E5F55;
+            --text-main: #3C3633;
+            --text-muted: #827872;
+            --border-color: #E6E1DA;
+            --accent-glow: rgba(140, 123, 112, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #F8F6F0;
-            color: #4A453F;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
         }
-        .card-hover {
-            transition: all 0.3s ease;
+
+        .container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
         }
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(184, 169, 150, 0.2);
+
+        .header {
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Área de escritura */
+        .writing-area {
+            position: relative;
+            width: 100%;
+        }
+
+        textarea {
+            width: 100%;
+            height: 220px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            background-color: #FAFAF8;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+            background-color: #FFFFFF;
+        }
+
+        /* Animación de disolución suave */
+        .dissolving {
+            animation: fadeOutParticles 1.2s forwards ease-in-out;
+        }
+
+        @keyframes fadeOutParticles {
+            0% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: blur(0px);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.01) translateY(-4px);
+                filter: blur(2px);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.98) translateY(-10px);
+                filter: blur(6px);
+            }
+        }
+
+        /* Botón de acción */
+        .action-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Mensaje de calma posterior */
+        .calm-message {
+            display: none;
+            text-align: center;
+            padding: 30px 20px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .calm-message h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .calm-message p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .footer-note {
+            font-size: 0.75rem;
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 4px;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between p-4 sm:p-8">
+<body>
 
-    <header class="max-w-2xl mx-auto w-full text-center py-6">
-        <span class="inline-block bg-[#EFECE6] text-[#8C7A6B] text-xs font-semibold px-3 py-1 rounded-full mb-3 tracking-wider uppercase">Pausa Activa</span>
-        <h1 class="text-3xl sm:text-4xl font-semibold text-[#38332E] tracking-tight mb-2">Espacio Calma</h1>
-        <p class="text-sm sm:text-base text-[#7A7067] max-w-md mx-auto">Un refugio visual para desconectar, cuidar de ti y regalarte micro-pausas sin prisa ni exigencias.</p>
-    </header>
-
-    <main class="max-w-2xl mx-auto w-full flex-1 flex flex-col gap-6 my-2">
-        
-        <!-- Botón de sugerencia al azar y contador -->
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#EFECE6]/60 p-4 rounded-2xl border border-[#E5E0D5]">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-[#DCD4C6] flex items-center justify-center text-[#5A5046] font-medium text-sm" id="completedCount">0/6</div>
-                <div>
-                    <h2 class="text-sm font-semibold text-[#38332E]">Tus pausas de hoy</h2>
-                    <p class="text-xs text-[#7A7067]">Selecciona las que desees completar a tu ritmo.</p>
-                </div>
-            </div>
-            <button onclick="suggestRandomPause()" class="w-full sm:w-auto bg-[#4A423B] hover:bg-[#38332E] text-[#F8F6F0] text-xs font-medium px-4 py-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
-                <span>✨ Sugerir pausa al azar</span>
-            </button>
+    <div class="container" id="mainContainer">
+        <div class="header">
+            <h1>🌿 Espacio de Descarga</h1>
+            <p>Escribe lo que necesites soltar. Nadie más lo leerá.</p>
         </div>
 
-        <!-- Tarjetas de micro-pausas (Grid) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="cardsGrid">
-            <!-- Las tarjetas se generan dinámicamente mediante JavaScript -->
+        <div class="writing-area" id="writingArea">
+            <textarea id="userText" placeholder="Escribe aquí tus pensamientos, pendientes o aquello que sientas pesado hoy..."></textarea>
         </div>
 
-    </main>
+        <button class="action-btn" id="releaseBtn" onclick="releaseText()">
+            ✨ Soltar y dejar ir
+        </button>
 
-    <footer class="max-w-2xl mx-auto w-full text-center py-6 border-t border-[#EFECE6] mt-8 text-xs text-[#9E9387]">
-        <p>Hecho para acompañarte en tu día. Sin registros ni presiones.</p>
-    </footer>
+        <!-- Mensaje que aparece al liberar -->
+        <div class="calm-message" id="calmMessage">
+            <h2>Listo. Ya lo has soltado.</h2>
+            <p>Tus palabras se han esfumado suavemente. Tómate una respiración profunda, relaja los hombros y continúa con tu día más liviana.</p>
+            <button class="action-btn" onclick="resetSpace()">Volver a escribir</button>
+        </div>
+
+        <div class="footer-note" id="footerNote">
+            Tus datos se quedan solo en tu pantalla y se borran al vaciarlos.
+        </div>
+    </div>
 
     <script>
-        // Definición de las micro-pausas
-        const pausasData = [
-            {
-                id: 1,
-                title: "Estirar hombros y cuello",
-                category: "Cuerpo",
-                icon: "🌿",
-                duration: "2 min",
-                description: "Suelta los brazos a los costados. Rota los hombros hacia atrás lentamente 5 veces. Inclina con suavidad la oreja hacia el hombro derecho y luego al izquierdo sin forzar.",
-                completed: false
-            },
-            {
-                id: 2,
-                title: "Atención al vaso de agua",
-                category: "Sensorial",
-                icon: "💧",
-                duration: "1 min",
-                description: "Sirve un vaso de agua fresca. Bebe pequeños sorbos prestando total atención a la temperatura, la textura y el recorrido del agua al calmar tu sed.",
-                completed: false
-            },
-            {
-                id: 3,
-                title: "Mirar por la ventana",
-                category: "Desconexión",
-                icon: "🪟",
-                duration: "2 min",
-                description: "Aleja la vista de cualquier pantalla. Busca un punto lejano por la ventana, observa el cielo, las formas o los colores de afuera sin juzgar, solo contemplando.",
-                completed: false
-            },
-            {
-                id: 4,
-                title: "Poner una canción favorita",
-                category: "Bienestar",
-                icon: "🎵",
-                duration: "3 min",
-                description: "Elige una canción que te traiga paz o alegría. Cierra los ojos o recuéstate mientras suena, escuchando cada instrumento o detalle melódico.",
-                completed: false
-            },
-            {
-                id: 5,
-                title: "Respiración consciente",
-                category: "Calma",
-                icon: "🌬️",
-                duration: "2 min",
-                description: "Inhala profundamente por la nariz contando hasta 4, sostén el aire suavemente por 2 segundos y exhala despacio por la boca contando hasta 6. Repítelo 4 veces.",
-                completed: false
-            },
-            {
-                id: 6,
-                title: "Pausa en silencio absoluto",
-                category: "Mente",
-                icon: "🕯️",
-                duration: "2 min",
-                description: "Silencia notificaciones, apaga música o sonidos externos si es posible. Quédate en absoluta quietud, permitiendo que tus pensamientos fluyan sin aferrarte a ninguno.",
-                completed: false
-            }
-        ];
-
-        let pausas = JSON.parse(localStorage.getItem('espacio_calma_pausas')) || pausasData;
-
-        function saveState() {
-            localStorage.setItem('espacio_calma_pausas', JSON.stringify(pausas));
-        }
-
-        function renderCards() {
-            const grid = document.getElementById('cardsGrid');
-            grid.innerHTML = '';
-
-            let completedCount = 0;
-
-            pausas.forEach((item, index) => {
-                if (item.completed) completedCount++;
-
-                const card = document.createElement('div');
-                card.className = `card-hover bg-white p-5 rounded-2xl border ${item.completed ? 'border-[#DCD4C6] bg-[#FAF8F5]' : 'border-[#EAE3D9]'} flex flex-col justify-between gap-4 cursor-pointer relative overflow-hidden`;
-                card.onclick = () => toggleDetails(item.id);
-
-                card.innerHTML = `
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <span class="text-2xl p-2 bg-[#F8F6F0] rounded-xl">${item.icon}</span>
-                            <div>
-                                <span class="text-[10px] font-semibold text-[#8C7A6B] uppercase tracking-wider">${item.category} • ${item.duration}</span>
-                                <h3 class="text-base font-medium text-[#38332E] ${item.completed ? 'line-through text-[#9E9387]' : ''}">${item.title}</h3>
-                            </div>
-                        </div>
-                        <button onclick="event.stopPropagation(); toggleComplete(${item.id})" class="w-6 h-6 rounded-full border-2 ${item.completed ? 'bg-[#8C7A6B] border-[#8C7A6B] text-white' : 'border-[#DCD4C6] hover:border-[#8C7A6B]'} flex items-center justify-center transition-all text-xs">
-                            ${item.completed ? '✓' : ''}
-                        </button>
-                    </div>
-                    <div class="text-xs text-[#7A7067] leading-relaxed border-t border-[#F4F1EA] pt-3">
-                        <p class="font-normal">${item.description}</p>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-
-            document.getElementById('completedCount').textContent = `${completedCount}/${pausas.length}`;
-        }
-
-        function toggleComplete(id) {
-            pausas = pausas.map(p => p.id === id ? { ...p, completed: !p.completed } : p);
-            saveState();
-            renderCards();
-        }
-
-        function toggleDetails(id) {
-            // Acción táctil adicional al hacer clic en la tarjeta (puede usarse para destacar)
-        }
-
-        function suggestRandomPause() {
-            const incomplete = pausas.filter(p => !p.completed);
-            if (incomplete.length === 0) {
-                alertCustom("¡Has completado todas las micro-pausas de hoy! Tómate un momento para celebrarlo.");
+        function releaseText() {
+            const textarea = document.getElementById('userText');
+            if (textarea.value.trim() === "") {
+                textarea.style.borderColor = "#D9822B";
+                setTimeout(() => {
+                    textarea.style.borderColor = "var(--border-color)";
+                }, 800);
                 return;
             }
-            const randomIndex = Math.floor(Math.random() * incomplete.length);
-            const chosen = incomplete[randomIndex];
-            
-            // Destacar o mostrar modal sutil o simplemente hacer scroll hacia la tarjeta
-            const cards = document.getElementById('cardsGrid').children;
-            const targetIndex = pausas.findIndex(p => p.id === chosen.id);
-            if (cards[targetIndex]) {
-                cards[targetIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                cards[targetIndex].style.transform = 'scale(1.02)';
-                setTimeout(() => {
-                    cards[targetIndex].style.transform = 'none';
-                }, 600);
-            }
+
+            // Aplicar animación de disolución al cuadro de texto
+            textarea.classList.add('dissolving');
+            document.getElementById('releaseBtn').style.display = 'none';
+            document.getElementById('footerNote').style.display = 'none';
+
+            // Tras la animación, mostrar mensaje de paz
+            setTimeout(() => {
+                textarea.style.display = 'none';
+                textarea.classList.remove('dissolving');
+                document.getElementById('calmMessage').style.display = 'block';
+            }, 1000);
         }
 
-        function alertCustom(msg) {
-            // Modal simple y limpio en lugar de alert nativo
-            const div = document.createElement('div');
-            div.className = 'fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50';
-            div.innerHTML = `
-                <div class="bg-white p-6 rounded-2xl max-w-sm w-full text-center shadow-lg border border-[#EAE3D9]">
-                    <p class="text-sm text-[#4A453F] mb-4">${msg}</p>
-                    <button onclick="this.parentElement.parentElement.remove()" class="bg-[#4A423B] text-[#F8F6F0] text-xs px-4 py-2 rounded-xl font-medium">Entendido</button>
-                </div>
-            `;
-            document.body.appendChild(div);
+        function resetSpace() {
+            const textarea = document.getElementById('userText');
+            textarea.value = "";
+            textarea.style.display = 'block';
+            document.getElementById('calmMessage').style.display = 'none';
+            document.getElementById('releaseBtn').style.display = 'flex';
+            document.getElementById('footerNote').style.display = 'block';
         }
-
-        // Inicializar
-        renderCards();
     </script>
 </body>
 </html>
