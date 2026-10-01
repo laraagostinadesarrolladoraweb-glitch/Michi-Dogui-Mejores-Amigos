@@ -2,384 +2,208 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Espacio Calma</title>
-    <!-- Tailwind CSS for modern responsive styling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espacio Calma - Tablero de Micro-Pausas</title>
+    <!-- Tailwind CSS para un diseño limpio y moderno -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            transition: background-color 0.8s ease, color 0.8s ease;
+            background-color: #F8F6F0;
+            color: #4A453F;
         }
-
-        /* Smooth transitions for theme changes */
-        .theme-transition {
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        .card-hover {
+            transition: all 0.3s ease;
         }
-
-        /* Custom scrollbar for mood selector on mobile */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(184, 169, 150, 0.2);
         }
     </style>
 </head>
-<body class="bg-[#F4F6F0] text-[#2C3531] min-h-screen flex flex-col selection:bg-[#8A9A86] selection:text-white" id="appBody">
+<body class="min-h-screen flex flex-col justify-between p-4 sm:p-8">
 
-    <!-- Franja de emergencia fija y visible -->
-    <div class="bg-[#FFF3F3] border-b-2 border-[#E57373] text-[#C62828] px-4 py-2.5 text-center text-xs md:text-sm flex flex-col sm:flex-row items-center justify-center gap-2 shadow-sm z-50">
-        <span class="font-medium">🚨 ¿Crisis o angustia profunda? Línea gratuita y confidencial 24 hs:</span>
-        <a href="tel:135" class="bg-[#C62828] hover:bg-[#B71C1C] text-white px-3 py-1 rounded-full font-bold transition-colors inline-flex items-center gap-1 shadow-sm">
-            📞 Llamar al 135
-        </a>
-    </div>
+    <header class="max-w-2xl mx-auto w-full text-center py-6">
+        <span class="inline-block bg-[#EFECE6] text-[#8C7A6B] text-xs font-semibold px-3 py-1 rounded-full mb-3 tracking-wider uppercase">Pausa Activa</span>
+        <h1 class="text-3xl sm:text-4xl font-semibold text-[#38332E] tracking-tight mb-2">Espacio Calma</h1>
+        <p class="text-sm sm:text-base text-[#7A7067] max-w-md mx-auto">Un refugio visual para desconectar, cuidar de ti y regalarte micro-pausas sin prisa ni exigencias.</p>
+    </header>
 
-    <!-- Contenedor Principal -->
-    <main class="flex-1 max-w-4xl w-full mx-auto p-4 md:p-8 flex flex-col gap-6">
+    <main class="max-w-2xl mx-auto w-full flex-1 flex flex-col gap-6 my-2">
         
-        <!-- Cabecera limpia y cercana -->
-        <header class="text-center md:text-left flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white/60 backdrop-blur-md p-6 rounded-3xl border border-white/80 shadow-sm theme-transition" id="headerCard">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-slate-800" id="appTitle">Espacio Calma</h1>
-                <p class="text-sm text-slate-600 mt-1" id="appSubtitle">Un lugar propio para habitar tu presente, sintonizar tus emociones y encontrar refugio.</p>
-            </div>
-            <div class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-100/80 rounded-2xl text-xs font-semibold text-slate-600 self-center md:self-auto" id="currentMoodBadge">
-                🌿 Selecciona tu sentir actual
-            </div>
-        </header>
-
-        <!-- Selector de Estados de Ánimo (Elementos de la Naturaleza) -->
-        <section class="flex flex-col gap-3">
-            <h2 class="text-sm font-semibold tracking-wide uppercase text-slate-500 px-1">¿Cómo vibra tu energía hoy?</h2>
-            
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3" id="moodGrid">
-                <!-- Se poblará vía JavaScript con interactividad total -->
-            </div>
-        </section>
-
-        <!-- Tarjeta de Contenido Dinámico (Ambiente y Música) -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
-            
-            <!-- Reproductor de Sonido Ambiental -->
-            <div class="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white/90 shadow-sm flex flex-col justify-between theme-transition" id="soundCard">
+        <!-- Botón de sugerencia al azar y contador -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#EFECE6]/60 p-4 rounded-2xl border border-[#E5E0D5]">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-[#DCD4C6] flex items-center justify-center text-[#5A5046] font-medium text-sm" id="completedCount">0/6</div>
                 <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-2xl" id="soundEmoji">🌧️</span>
-                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 text-slate-600" id="soundTag">Ambiente</span>
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-1" id="soundTitle">Sonido Relajante</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed" id="soundDesc">Escucha un audio generado para acompañar tu pausa y aquietar la mente.</p>
-                </div>
-
-                <div class="mt-6 flex flex-col gap-4">
-                    <div class="flex items-center justify-between">
-                        <button id="playAudioBtn" onclick="toggleAudio()" class="w-full py-3 px-4 rounded-2xl bg-slate-900 text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-95 transition-all shadow-sm">
-                            <span id="playIcon">▶</span> <span id="playBtnText">Reproducir ambiente sonoro</span>
-                        </button>
-                    </div>
-                    <!-- Control de Volumen sutil -->
-                    <div class="flex items-center gap-3 px-2">
-                        <span class="text-xs text-slate-400">Volumen</span>
-                        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.4" onchange="adjustVolume(this.value)" class="w-full accent-slate-700 cursor-pointer">
-                    </div>
+                    <h2 class="text-sm font-semibold text-[#38332E]">Tus pausas de hoy</h2>
+                    <p class="text-xs text-[#7A7067]">Selecciona las que desees completar a tu ritmo.</p>
                 </div>
             </div>
+            <button onclick="suggestRandomPause()" class="w-full sm:w-auto bg-[#4A423B] hover:bg-[#38332E] text-[#F8F6F0] text-xs font-medium px-4 py-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
+                <span>✨ Sugerir pausa al azar</span>
+            </button>
+        </div>
 
-            <!-- Recomendaciones de Playlist -->
-            <div class="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white/90 shadow-sm flex flex-col justify-between theme-transition" id="playlistCard">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-2xl" id="playlistEmoji">🎧</span>
-                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 text-slate-600" id="playlistTag">Música</span>
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-1" id="playlistTitle">Selección Sonora</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed" id="playlistDesc">Una lista de reproducción sugerida para conectar con esta sintonía.</p>
-                </div>
+        <!-- Tarjetas de micro-pausas (Grid) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="cardsGrid">
+            <!-- Las tarjetas se generan dinámicamente mediante JavaScript -->
+        </div>
 
-                <div class="mt-6 flex flex-col sm:flex-row gap-3">
-                    <a href="#" id="spotifyLink" target="_blank" class="flex-1 py-3 px-4 rounded-2xl bg-[#1DB954] hover:bg-[#1aa34a] text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-sm">
-                        <span>🟢 Abrir en Spotify</span>
-                    </a>
-                    <a href="#" id="youtubeLink" target="_blank" class="flex-1 py-3 px-4 rounded-2xl bg-[#FF0000] hover:bg-[#e60000] text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-sm">
-                        <span>🔴 Abrir en YouTube</span>
-                    </a>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- Pie de página discreto -->
-        <footer class="text-center text-xs text-slate-500 py-4 mt-auto">
-            Espacio Calma — Un refugio visual y sonoro sin registros automáticos ni chatbots.
-        </footer>
     </main>
 
-    <!-- Lógica de la aplicación y Generador de Audio Sintetizado (Sin archivos externos) -->
+    <footer class="max-w-2xl mx-auto w-full text-center py-6 border-t border-[#EFECE6] mt-8 text-xs text-[#9E9387]">
+        <p>Hecho para acompañarte en tu día. Sin registros ni presiones.</p>
+    </footer>
+
     <script>
-        // Definición de Estados de Ánimo con sus temas visuales y recomendaciones musicales
-        const moods = [
+        // Definición de las micro-pausas
+        const pausasData = [
             {
-                id: 'bosque',
-                name: 'Bosque tranquilo',
-                emoji: '🌲',
-                bg: '#F2F6F0',
-                cardBg: '#FFFFFF',
-                primaryColor: '#3A5A40',
-                accentColor: '#A3B18A',
-                soundType: 'forest',
-                soundTitle: 'Rumor de Hojas y Brisa',
-                soundDesc: 'Sonido suave de frecuencias naturales para arraigar la atención en el presente.',
-                spotify: 'https://open.spotify.com/search/peaceful%20forest%20ambient',
-                youtube: 'https://www.youtube.com/results?search_query=deep+forest+ambient+relaxation+music',
-                tag: 'Naturaleza'
+                id: 1,
+                title: "Estirar hombros y cuello",
+                category: "Cuerpo",
+                icon: "🌿",
+                duration: "2 min",
+                description: "Suelta los brazos a los costados. Rota los hombros hacia atrás lentamente 5 veces. Inclina con suavidad la oreja hacia el hombro derecho y luego al izquierdo sin forzar.",
+                completed: false
             },
             {
-                id: 'atardecer',
-                name: 'Atardecer calma',
-                emoji: '🌅',
-                bg: '#FAF4EF',
-                cardBg: '#FFFFFF',
-                primaryColor: '#9C6644',
-                accentColor: '#D8A47F',
-                soundType: 'sunset',
-                soundTitle: 'Armonía de Ocaso',
-                soundDesc: 'Acordes cálidos y pausados ideales para soltar las tensiones del día.',
-                spotify: 'https://open.spotify.com/search/sunset%20acoustic%20lofi',
-                youtube: 'https://www.youtube.com/results?search_query=sunset+relaxing+lofi+music',
-                tag: 'Calidez'
+                id: 2,
+                title: "Atención al vaso de agua",
+                category: "Sensorial",
+                icon: "💧",
+                duration: "1 min",
+                description: "Sirve un vaso de agua fresca. Bebe pequeños sorbos prestando total atención a la temperatura, la textura y el recorrido del agua al calmar tu sed.",
+                completed: false
             },
             {
-                id: 'nublado',
-                name: 'Día nublado',
-                emoji: '☁️',
-                bg: '#F0F4F8',
-                cardBg: '#FFFFFF',
-                primaryColor: '#457B9D',
-                accentColor: '#A8DADC',
-                soundType: 'rain',
-                soundTitle: 'Lluvia Suave en la Ventana',
-                soundDesc: 'Murmullo continuo de lluvia ligera para arropar los pensamientos.',
-                spotify: 'https://open.spotify.com/search/soft%20rain%20ambient%20sounds',
-                youtube: 'https://www.youtube.com/results?search_query=gentle+rain+sound+for+relaxation',
-                tag: 'Introspección'
+                id: 3,
+                title: "Mirar por la ventana",
+                category: "Desconexión",
+                icon: "🪟",
+                duration: "2 min",
+                description: "Aleja la vista de cualquier pantalla. Busca un punto lejano por la ventana, observa el cielo, las formas o los colores de afuera sin juzgar, solo contemplando.",
+                completed: false
             },
             {
-                id: 'mar',
-                name: 'Mar agitado',
-                emoji: '🌊',
-                bg: '#EFF3F8',
-                cardBg: '#FFFFFF',
-                primaryColor: '#1D3557',
-                accentColor: '#457B9D',
-                soundType: 'waves',
-                soundTitle: 'Oleaje Profundo y Constante',
-                soundDesc: 'El vaivén del agua ayudando a regular el ritmo de la respiración.',
-                spotify: 'https://open.spotify.com/search/ocean%20waves%20meditation',
-                youtube: 'https://www.youtube.com/results?search_query=ocean+waves+deep+relaxation+sound',
-                tag: 'Liberación'
+                id: 4,
+                title: "Poner una canción favorita",
+                category: "Bienestar",
+                icon: "🎵",
+                duration: "3 min",
+                description: "Elige una canción que te traiga paz o alegría. Cierra los ojos o recuéstate mientras suena, escuchando cada instrumento o detalle melódico.",
+                completed: false
             },
             {
-                id: 'viento',
-                name: 'Viento fuerte',
-                emoji: '🍃',
-                bg: '#F5F5F0',
-                cardBg: '#FFFFFF',
-                primaryColor: '#585344',
-                accentColor: '#A39B8B',
-                soundType: 'wind',
-                soundTitle: 'Corriente de Aire Fresco',
-                soundDesc: 'Ruido blanco natural que despeja la saturación mental.',
-                spotify: 'https://open.spotify.com/search/wind%20ambient%20soundscape',
-                youtube: 'https://www.youtube.com/results?search_query=wind%20noise%20ambient%20relaxation',
-                tag: 'Despeje'
+                id: 5,
+                title: "Respiración consciente",
+                category: "Calma",
+                icon: "🌬️",
+                duration: "2 min",
+                description: "Inhala profundamente por la nariz contando hasta 4, sostén el aire suavemente por 2 segundos y exhala despacio por la boca contando hasta 6. Repítelo 4 veces.",
+                completed: false
+            },
+            {
+                id: 6,
+                title: "Pausa en silencio absoluto",
+                category: "Mente",
+                icon: "🕯️",
+                duration: "2 min",
+                description: "Silencia notificaciones, apaga música o sonidos externos si es posible. Quédate en absoluta quietud, permitiendo que tus pensamientos fluyan sin aferrarte a ninguno.",
+                completed: false
             }
         ];
 
-        let currentMood = moods[0]; // Inicia en Bosque tranquilo
-        let audioCtx = null;
-        let isPlaying = false;
-        let noiseNode = null;
-        let gainNode = null;
-        let filterNode = null;
+        let pausas = JSON.parse(localStorage.getItem('espacio_calma_pausas')) || pausasData;
 
-        // Inicializar interfaz al cargar
-        window.addEventListener('DOMContentLoaded', () => {
-            renderMoodGrid();
-            applyMoodTheme(currentMood);
-        });
+        function saveState() {
+            localStorage.setItem('espacio_calma_pausas', JSON.stringify(pausas));
+        }
 
-        function renderMoodGrid() {
-            const grid = document.getElementById('moodGrid');
+        function renderCards() {
+            const grid = document.getElementById('cardsGrid');
             grid.innerHTML = '';
 
-            moods.forEach(mood => {
-                const btn = document.createElement('button');
-                const isSelected = mood.id === currentMood.id;
-                
-                btn.className = `p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all duration-300 border text-center ${
-                    isSelected 
-                    ? 'ring-2 ring-offset-2 shadow-md scale-[1.02]' 
-                    : 'bg-white/70 hover:bg-white border-white/80 shadow-xs hover:shadow-sm'
-                }`;
-                
-                if(isSelected) {
-                    btn.style.borderColor = mood.primaryColor;
-                    btn.style.backgroundColor = 'white';
-                    btn.style.boxShadow = `0 4px 20px ${mood.primaryColor}22`;
-                }
+            let completedCount = 0;
 
-                btn.innerHTML = `
-                    <span class="text-3xl">${mood.emoji}</span>
-                    <span class="text-xs font-semibold text-slate-700">${mood.name}</span>
+            pausas.forEach((item, index) => {
+                if (item.completed) completedCount++;
+
+                const card = document.createElement('div');
+                card.className = `card-hover bg-white p-5 rounded-2xl border ${item.completed ? 'border-[#DCD4C6] bg-[#FAF8F5]' : 'border-[#EAE3D9]'} flex flex-col justify-between gap-4 cursor-pointer relative overflow-hidden`;
+                card.onclick = () => toggleDetails(item.id);
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl p-2 bg-[#F8F6F0] rounded-xl">${item.icon}</span>
+                            <div>
+                                <span class="text-[10px] font-semibold text-[#8C7A6B] uppercase tracking-wider">${item.category} • ${item.duration}</span>
+                                <h3 class="text-base font-medium text-[#38332E] ${item.completed ? 'line-through text-[#9E9387]' : ''}">${item.title}</h3>
+                            </div>
+                        </div>
+                        <button onclick="event.stopPropagation(); toggleComplete(${item.id})" class="w-6 h-6 rounded-full border-2 ${item.completed ? 'bg-[#8C7A6B] border-[#8C7A6B] text-white' : 'border-[#DCD4C6] hover:border-[#8C7A6B]'} flex items-center justify-center transition-all text-xs">
+                            ${item.completed ? '✓' : ''}
+                        </button>
+                    </div>
+                    <div class="text-xs text-[#7A7067] leading-relaxed border-t border-[#F4F1EA] pt-3">
+                        <p class="font-normal">${item.description}</p>
+                    </div>
                 `;
-
-                btn.onclick = () => selectMood(mood.id);
-                grid.appendChild(btn);
+                grid.appendChild(card);
             });
+
+            document.getElementById('completedCount').textContent = `${completedCount}/${pausas.length}`;
         }
 
-        function selectMood(id) {
-            const found = moods.find(m => m.id === id);
-            if (!found) return;
+        function toggleComplete(id) {
+            pausas = pausas.map(p => p.id === id ? { ...p, completed: !p.completed } : p);
+            saveState();
+            renderCards();
+        }
 
-            // Si estaba sonando, detener al cambiar de estado por comodidad
-            if (isPlaying) {
-                stopAudio();
+        function toggleDetails(id) {
+            // Acción táctil adicional al hacer clic en la tarjeta (puede usarse para destacar)
+        }
+
+        function suggestRandomPause() {
+            const incomplete = pausas.filter(p => !p.completed);
+            if (incomplete.length === 0) {
+                alertCustom("¡Has completado todas las micro-pausas de hoy! Tómate un momento para celebrarlo.");
+                return;
             }
-
-            currentMood = found;
-            renderMoodGrid();
-            applyMoodTheme(currentMood);
-        }
-
-        function applyMoodTheme(mood) {
-            // Fondo general de la página
-            document.body.style.backgroundColor = mood.bg;
-
-            // Insignia superior
-            const badge = document.getElementById('currentMoodBadge');
-            badge.innerHTML = `${mood.emoji} Sintonía actual: ${mood.name}`;
-            badge.style.color = mood.primaryColor;
-            badge.style.backgroundColor = `${mood.primaryColor}15`;
-
-            // Títulos y textos descriptivos de audio y música
-            document.getElementById('soundEmoji').textContent = mood.emoji;
-            document.getElementById('soundTag').textContent = mood.tag;
-            document.getElementById('soundTitle').textContent = mood.soundTitle;
-            document.getElementById('soundDesc').textContent = mood.soundDesc;
-
-            document.getElementById('playlistEmoji').textContent = mood.emoji;
-            document.getElementById('playlistTag').textContent = mood.tag;
-            document.getElementById('playlistTitle').textContent = `Playlist: ${mood.name}`;
-            document.getElementById('playlistDesc').textContent = `Selección musical sintonizada con el estado de ${mood.name.toLowerCase()}.`;
-
-            // Enlaces externos
-            document.getElementById('spotifyLink').href = mood.spotify;
-            document.getElementById('youtubeLink').href = mood.youtube;
-        }
-
-        // --- SISTEMA DE AUDIO AMBIENTAL CON WEB AUDIO API (Sin archivos externos) ---
-        function toggleAudio() {
-            if (isPlaying) {
-                stopAudio();
-            } else {
-                startAudio();
+            const randomIndex = Math.floor(Math.random() * incomplete.length);
+            const chosen = incomplete[randomIndex];
+            
+            // Destacar o mostrar modal sutil o simplemente hacer scroll hacia la tarjeta
+            const cards = document.getElementById('cardsGrid').children;
+            const targetIndex = pausas.findIndex(p => p.id === chosen.id);
+            if (cards[targetIndex]) {
+                cards[targetIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                cards[targetIndex].style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    cards[targetIndex].style.transform = 'none';
+                }, 600);
             }
         }
 
-        function startAudio() {
-            try {
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-
-                // Generar ruido blanco filtrado según el tipo de ambiente
-                const bufferSize = 2 * audioCtx.sampleRate;
-                const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-                const output = noiseBuffer.getChannelData(0);
-                
-                for (let i = 0; i < bufferSize; i++) {
-                    output[i] = Math.random() * 2 - 1;
-                }
-
-                noiseNode = audioCtx.createBufferSource();
-                noiseNode.buffer = noiseBuffer;
-                noiseNode.loop = true;
-
-                filterNode = audioCtx.createBiquadFilter();
-                
-                // Configurar frecuencia de filtro según el ambiente sonoro
-                switch(currentMood.soundType) {
-                    case 'forest':
-                        filterNode.type = 'bandpass';
-                        filterNode.frequency.value = 800;
-                        filterNode.Q.value = 1.2;
-                        break;
-                    case 'sunset':
-                        filterNode.type = 'lowpass';
-                        filterNode.frequency.value = 350;
-                        break;
-                    case 'rain':
-                        filterNode.type = 'lowpass';
-                        filterNode.frequency.value = 1000;
-                        break;
-                    case 'waves':
-                        filterNode.type = 'lowpass';
-                        filterNode.frequency.value = 500;
-                        break;
-                    case 'wind':
-                    default:
-                        filterNode.type = 'lowpass';
-                        filterNode.frequency.value = 600;
-                        break;
-                }
-
-                gainNode = audioCtx.createGain();
-                const sliderVal = document.getElementById('volumeSlider').value;
-                gainNode.gain.setValueAtTime(sliderVal, audioCtx.currentTime);
-
-                noiseNode.connect(filterNode);
-                filterNode.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-
-                noiseNode.start(0);
-                isPlaying = true;
-
-                document.getElementById('playIcon').textContent = '⏹';
-                document.getElementById('playBtnText').textContent = 'Pausar ambiente sonoro';
-                document.getElementById('playAudioBtn').classList.add('bg-emerald-800');
-            } catch (e) {
-                console.error("Error al iniciar audio:", e);
-            }
+        function alertCustom(msg) {
+            // Modal simple y limpio en lugar de alert nativo
+            const div = document.createElement('div');
+            div.className = 'fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50';
+            div.innerHTML = `
+                <div class="bg-white p-6 rounded-2xl max-w-sm w-full text-center shadow-lg border border-[#EAE3D9]">
+                    <p class="text-sm text-[#4A453F] mb-4">${msg}</p>
+                    <button onclick="this.parentElement.parentElement.remove()" class="bg-[#4A423B] text-[#F8F6F0] text-xs px-4 py-2 rounded-xl font-medium">Entendido</button>
+                </div>
+            `;
+            document.body.appendChild(div);
         }
 
-        function stopAudio() {
-            if (noiseNode) {
-                try {
-                    noiseNode.stop();
-                    noiseNode.disconnect();
-                } catch(e) {}
-                noiseNode = null;
-            }
-            isPlaying = false;
-            document.getElementById('playIcon').textContent = '▶';
-            document.getElementById('playBtnText').textContent = 'Reproducir ambiente sonoro';
-            document.getElementById('playAudioBtn').classList.remove('bg-emerald-800');
-        }
-
-        function adjustVolume(val) {
-            if (gainNode && audioCtx) {
-                gainNode.gain.setValueAtTime(parseFloat(val), audioCtx.currentTime);
-            }
-        }
+        // Inicializar
+        renderCards();
     </script>
 </body>
 </html>
