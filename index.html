@@ -2,229 +2,335 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Espacio Calma - Apoyo Emocional Inteligente</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espacio Calma - Asistencia Virtual</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #EBF2ED;
+            background-color: #f0fdf4;
+        }
+        /* Custom scrollbar for chat */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
     </style>
 </head>
-<body class="h-[100vh] h-[100dvh] flex flex-col justify-center items-center overflow-hidden">
+<body class="flex flex-col h-[100dvh] overflow-hidden m-0 p-0 text-slate-800">
 
-    <div class="w-full h-full md:max-w-xl md:h-[88vh] md:rounded-2xl bg-white shadow-xl flex flex-col overflow-hidden border border-[#D5E1D7]">
-        
-        <!-- Franja de Emergencia Superior Fija -->
-        <div class="bg-[#FFEBEE] border-b-2 border-[#E57373] text-[#C62828] px-4 py-2.5 text-center text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center gap-2 z-20 shrink-0">
-            <span>🚨 <strong>¿Crisis o pensamientos oscuros?</strong> No estás solo/a. Línea gratuita 24 hs:</span>
-            <a href="tel:135" class="bg-[#C62828] text-white px-3 py-1 rounded-full font-bold hover:bg-[#B71C1C] transition shadow-sm text-xs flex items-center gap-1">
-                📞 Llamar al 135
-            </a>
+    <!-- Banner de emergencia fijo superior -->
+    <header class="bg-red-600 text-white px-4 py-2.5 shadow-md z-50 flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm font-medium gap-2 shrink-0">
+        <div class="flex items-center gap-2 text-center sm:text-left">
+            <i class="fa-solid fa-triangle-exclamation text-amber-300 animate-pulse text-base"></i>
+            <span>🚨 ¿Crisis o angustia profunda? Línea gratuita y confidencial 24 hs:</span>
         </div>
+        <a href="tel:135" class="bg-white text-red-600 hover:bg-red-50 font-bold px-3 py-1.5 rounded-full shadow transition-all transform hover:scale-105 flex items-center gap-1.5 text-xs">
+            <i class="fa-solid fa-phone"></i> Llamar al 135
+        </a>
+    </header>
 
-        <!-- Encabezado de la App -->
-        <div class="bg-[#4A7C59] text-white px-4 py-3.5 flex items-center justify-between shrink-0 shadow-sm">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white text-[#4A7C59] rounded-full flex items-center justify-center font-bold text-lg shadow-inner">
-                    EC
+    <!-- Contenedor Principal adaptable (Tarjeta flotante en PC, Pantalla completa en móvil) -->
+    <main class="flex-1 flex justify-center items-center sm:p-4 md:p-6 overflow-hidden">
+        <div class="w-full h-full sm:h-[90vh] sm:max-w-4xl bg-white sm:rounded-2xl shadow-none sm:shadow-2xl flex flex-col border border-emerald-100 overflow-hidden relative">
+
+            <!-- Encabezado de la App -->
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white px-4 sm:px-6 py-3.5 flex items-center justify-between shadow-sm shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm text-white">
+                        <i class="fa-solid fa-seedling text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-base sm:text-lg tracking-wide">Espacio Calma</h1>
+                        <p class="text-xs text-emerald-100 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-ping"></span> Asistencia y orientación emocional 24/7
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="font-semibold text-base sm:text-lg leading-tight">Espacio Calma</h1>
-                    <p class="text-xs text-[#D8E6DC] flex items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        Asistente empático activo (IA)
-                    </p>
+                <button id="clearBtn" title="Reiniciar conversación" class="text-emerald-100 hover:text-white hover:bg-white/10 p-2 rounded-full transition text-sm">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
+
+            <!-- Área de Conversación -->
+            <div id="chatContainer" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-gradient-to-b from-emerald-50/30 to-white">
+                <!-- Mensaje de bienvenida inicial -->
+                <div class="flex items-start gap-3 max-w-[85%] sm:max-w-[75%]">
+                    <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm text-sm">
+                        <i class="fa-solid fa-dove"></i>
+                    </div>
+                    <div class="bg-white border border-emerald-100 p-4 rounded-2xl rounded-tl-none shadow-sm text-slate-700 text-sm sm:text-base leading-relaxed">
+                        <p class="font-semibold text-emerald-800 mb-1">Hola, estoy aquí contigo. 🌿</p>
+                        <p>Este es un lugar seguro para detenerte un momento, respirar y expresar lo que llevas dentro. Puedes contarme cómo te sientes o elegir una de las opciones de abajo.</p>
+                    </div>
                 </div>
             </div>
-            <button onclick="clearChat()" class="text-xs text-white/80 hover:text-white bg-[#5B8F6B] px-2.5 py-1.5 rounded-lg transition">
-                Reiniciar chat
-            </button>
-        </div>
 
-        <!-- Contenedor de Mensajes del Chat -->
-        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto flex flex-col gap-3 bg-gradient-to-b from-[#F9FBF9] to-[#FFFFFF]">
-            <div class="max-w-[85%] sm:max-w-[80%] p-3.5 rounded-2xl rounded-bl-sm bg-[#F0F5F1] text-[#2C3E35] text-sm sm:text-base leading-relaxed shadow-sm">
-                Hola. Qué bueno que estés aquí. Este es un espacio seguro y confidencial para hacer una pausa, respirar y expresar lo que sientes. ¿Cómo puedo acompañarte en este momento?
+            <!-- Opciones rápidas iniciales -->
+            <div id="quickOptions" class="px-4 py-2.5 bg-emerald-50/60 border-t border-emerald-100 flex flex-wrap gap-2 shrink-0">
+                <button onclick="handleQuickOption('🌊 Tengo mucha ansiedad')" class="text-xs sm:text-sm bg-white hover:bg-emerald-100/70 text-emerald-800 border border-emerald-200 px-3.5 py-2 rounded-full shadow-xs transition flex items-center gap-1.5 font-medium">
+                    <span>🌊 Tengo mucha ansiedad</span>
+                </button>
+                <button onclick="handleQuickOption('🌧️ Me siento triste o abrumado/a')" class="text-xs sm:text-sm bg-white hover:bg-emerald-100/70 text-emerald-800 border border-emerald-200 px-3.5 py-2 rounded-full shadow-xs transition flex items-center gap-1.5 font-medium">
+                    <span>🌧️ Me siento triste o abrumado/a</span>
+                </button>
+                <button onclick="handleQuickOption('💬 Solo quiero desahogarme')" class="text-xs sm:text-sm bg-white hover:bg-emerald-100/70 text-emerald-800 border border-emerald-200 px-3.5 py-2 rounded-full shadow-xs transition flex items-center gap-1.5 font-medium">
+                    <span>💬 Solo quiero desahogarme</span>
+                </button>
             </div>
-            
-            <!-- Indicador de escritura dinámico -->
-            <div id="typingIndicator" class="hidden self-start bg-[#F0F5F1] px-4 py-3 rounded-2xl rounded-bl-sm">
-                <div class="flex gap-1.5 items-center h-4">
-                    <span class="w-2 h-2 bg-[#688F75] rounded-full animate-bounce"></span>
-                    <span class="w-2 h-2 bg-[#688F75] rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                    <span class="w-2 h-2 bg-[#688F75] rounded-full animate-bounce [animation-delay:0.4s]"></span>
-                </div>
+
+            <!-- Input de Escritura Libre -->
+            <div class="p-3 sm:p-4 bg-white border-t border-slate-100 shrink-0">
+                <form id="chatForm" class="flex items-center gap-2">
+                    <input 
+                        type="text" 
+                        id="userInput" 
+                        placeholder="Escribe lo que sientes o necesitas..." 
+                        autocomplete="off"
+                        class="flex-1 bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 rounded-full px-4 py-3 text-sm outline-none transition text-slate-700 placeholder-slate-400"
+                    >
+                    <button 
+                        type="submit" 
+                        id="sendBtn"
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white w-11 h-11 rounded-full flex items-center justify-center shadow-md transition transform hover:scale-105 shrink-0"
+                    >
+                        <i class="fa-solid fa-paper-plane text-sm"></i>
+                    </button>
+                </form>
+                <p class="text-[11px] text-center text-slate-400 mt-2">
+                    Espacio de apoyo confidencial. En situaciones críticas, recuerda llamar al <a href="tel:135" class="text-emerald-600 font-semibold underline">135</a> o al <a href="tel:911" class="text-emerald-600 font-semibold underline">911</a>.
+                </p>
             </div>
-        </div>
 
-        <!-- Opciones rápidas interactivas -->
-        <div id="quickReplies" class="px-4 py-2.5 flex gap-2 overflow-x-auto bg-[#FAFCFA] border-t border-[#EDF2EE] shrink-0 no-scrollbar">
-            <button onclick="handleChoice('Ansiedad')" class="bg-[#E2ECE5] text-[#4A7C59] border border-[#688F75]/40 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium hover:bg-[#4A7C59] hover:text-white transition whitespace-nowrap shadow-xs">
-                🌊 Tengo mucha ansiedad
-            </button>
-            <button onclick="handleChoice('Tristeza')" class="bg-[#E2ECE5] text-[#4A7C59] border border-[#688F75]/40 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium hover:bg-[#4A7C59] hover:text-white transition whitespace-nowrap shadow-xs">
-                🌧️ Me siento triste o abrumado/a
-            </button>
-            <button onclick="handleChoice('Desahogo')" class="bg-[#E2ECE5] text-[#4A7C59] border border-[#688F75]/40 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium hover:bg-[#4A7C59] hover:text-white transition whitespace-nowrap shadow-xs">
-                💬 Solo quiero desahogarme
-            </button>
         </div>
+    </main>
 
-        <!-- Barra de Entrada de Texto -->
-        <div class="p-3 bg-[#F9FBF9] border-t border-[#E0E6E2] flex gap-2 items-center shrink-0">
-            <input type="text" id="userInput" placeholder="Escribe lo que sientes o piensas..." onkeypress="handleKeyPress(event)" class="flex-1 px-4 py-3 bg-white border border-[#CBD5D0] rounded-full focus:outline-none focus:border-[#4A7C59] text-sm sm:text-base text-[#2C3E35] placeholder-[#8C9E94]">
-            <button onclick="sendMessage()" class="bg-[#4A7C59] hover:bg-[#3E6A4B] text-white w-11 h-11 rounded-full flex items-center justify-center transition shadow-md shrink-0">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            </button>
-        </div>
-
-        <!-- Disclaimer inferior -->
-        <div class="bg-[#F9FBF9] text-center py-1.5 text-[10px] sm:text-xs text-[#7A8A80] border-t border-[#EEF3EF] shrink-0">
-            Espacio de apoyo emocional y orientación preventiva. No reemplaza la terapia psicológica profesional.
-        </div>
-    </div>
-
+    <!-- Script del Motor Inteligente Antirrepetición y Empatía -->
     <script>
-        const chatMessages = document.getElementById('chatMessages');
-        const userInput = document.getElementById('userInput');
-        const typingIndicator = document.getElementById('typingIndicator');
+        // Banco de respuestas variadas y dinámicas para evitar repeticiones robóticas
+        const responseBank = {
+            saludos: [
+                "Hola. Qué bueno que te detengas un momento para estar aquí. ¿Cómo transcurre tu día?",
+                "Hola, te doy la bienvenida. Respira hondo y dime, ¿cómo te encuentras en este preciso instante?",
+                "Hola, qué gusto saludarte. Este es un espacio exclusivo para ti. ¿De qué te gustaría hablar hoy?",
+                "Hola. A veces el día pesa un poco más de lo habitual; estoy aquí para escucharte sin juicios."
+            ],
+            ansiedad: [
+                "Llevar esa sensación de aceleración o nudo en el pecho agota muchísimo. Vamos a frenar un segundo: ¿puedes notar tus pies firmes apoyados en el suelo ahora mismo?",
+                "La ansiedad suele adelantarse al futuro y robarnos la paz del presente. Inhala despacio contando hasta cuatro, sostén un momento, y exhala muy suave. ¿Qué es lo que más te abruma ahora mismo?",
+                "Entiendo perfectamente esa tormenta interna que provoca la ansiedad. No tienes que resolver todo ya mismo. ¿Hay algún pensamiento puntual dando vueltas en tu cabeza?",
+                "Cuando la mente va a mil por hora, el cuerpo sufre. Permítete soltar los hombros y aflojar las manos. Estoy contigo, cuéntame qué te genera este estado."
+            ],
+            tristeza: [
+                "Saber sostener la tristeza requiere mucha valentía. Está bien no estar bien todo el tiempo. ¿Quieres contarme qué nube gris te acompaña hoy?",
+                "Te abrazo a la distancia en este momento de bajón. A veces las lágrimas o el peso en el cuerpo solo necesitan un espacio seguro para manifestarse.",
+                "La tristeza duele físicamente, lo sé. No estás solo ni sola con esto. ¿Hay algo específico que haya gatillado este sentimiento en ti?",
+                "Permítete sentir lo que venga sin exigirte estar alegre. A veces el corazón solo necesita desahogarse y ser escuchado."
+            ],
+            desahogo: [
+                "Te escucho con total atención. Suelta todo lo que llevas cargando, sin filtros, aquí nadie te va a juzgar.",
+                "Escribe todo lo que necesites sacar de adentro. A veces poner en palabras lo que nos quema por dentro aligera un poco el camino.",
+                "Adelante, desahógate con total confianza. Estoy aquí para leerte el tiempo que haga falta.",
+                "Te leo. Dejar salir lo que pesa es el primer paso para empezar a sanar un poquito. Cuéntame con total libertad."
+            ],
+            agradecimiento: [
+                "No tienes que agradecer. Poder acompañarte en este momento es un honor. Estoy aquí siempre que lo necesites.",
+                "Me alegra haberte brindado un poco de calma. Cuídate mucho y recuerda que tu bienestar importa.",
+                "Gracias a ti por confiar y abrir tu corazón. Que el resto de tu día te traiga más paz."
+            ],
+            general: [
+                "Comprendo lo que me compartes. Las emociones humanas son complejas y a veces necesitamos procesarlas paso a paso. ¿Cómo te hace sentir eso en el cuerpo?",
+                "Te escucho con atención. A veces la vida nos pone desafíos intensos; cuéntame un poco más de cómo estás viviendo esta situación.",
+                "Valoro mucho que compartas esto conmigo. Estoy aquí para acompañarte a reflexionar y encontrar un respiro.",
+                "Cada palabra que dices cuenta y es importante. ¿De qué forma te gustaría que sigamos conversando sobre esto?"
+            ]
+        };
 
-        // Historial de conversación para la IA tipo ChatGPT/Gemini
-        let chatHistory = [
-            {
-                role: "user",
-                parts: [{ text: "Hola, preséntate brevemente como Espacio Calma y establece que estás listo para escuchar y apoyar con calidez." }]
-            },
-            {
-                role: "model",
-                parts: [{ text: "Hola. Qué bueno que estés aquí. Este es un espacio seguro y confidencial para hacer una pausa, respirar y expresar lo que sientes. ¿Cómo puedo acompañarte en este momento?" }]
-            }
+        // Historial de índices para garantizar que NUNCA se repita de forma consecutiva
+        let lastIndices = {
+            saludos: -1,
+            ansiedad: -1,
+            tristeza: -1,
+            desahogo: -1,
+            agradecimiento: -1,
+            general: -1
+        };
+
+        function getUniqueRandomResponse(category) {
+            const arr = responseBank[category];
+            let idx;
+            do {
+                idx = Math.floor(Math.random() * arr.length);
+            } while (idx === lastIndices[category] && arr.length > 1);
+            lastIndices[category] = idx;
+            return arr[idx];
+        }
+
+        // Palabras clave de crisis extrema
+        const crisisKeywords = [
+            "suicidio", "suicidarme", "morir", "morirme", "matar", "matarme", 
+            "no quiero vivir", "desaparecer", "acabar con todo", "quitarme la vida",
+            "fin de todo", "saltar", "ahorcarme", "pastillas", "cortarme"
         ];
 
-        const systemInstructionText = `Eres 'Espacio Calma', una asistente virtual de apoyo emocional, contención y orientación psicológica preventiva y empática. Tu tono es cálido, humano, compasivo, paciente y respetuoso, nunca robótico ni frío. 
-        REGLAS CRÍTICAS DE SEGURIDAD:
-        1. Si el usuario expresa intenciones de autolesión, desesperanza extrema, crisis severas, deseos de morir o nombra el suicidio, debes responder de inmediato con extrema empatía y mostrar con claridad la recomendación prioritaria de comunicarse a la Línea de Prevención del Suicidio llamando gratis al número 135 en Argentina (o al 911 en emergencias urgentes).
-        2. Ofrece pautas breves de regulación emocional (como respiración guiada, grounding) cuando detectes ansiedad o abrumo.
-        3. Nunca des diagnósticos médicos psiquiátricos definitivos ni recetes medicamentos; siempre recuerda con suavidad la importancia de la ayuda profesional.
-        4. Responde de forma natural, universal y conversacional a cualquier consulta o frase que el usuario te escriba, exactamente igual que un modelo de lenguaje avanzado tipo ChatGPT o Gemini.`;
+        const chatContainer = document.getElementById('chatContainer');
+        const chatForm = document.getElementById('chatForm');
+        const userInput = document.getElementById('userInput');
+        const quickOptions = document.getElementById('quickOptions');
 
-        function appendMessage(text, sender) {
+        function appendMessage(sender, text, isCrisis = false) {
+            const isUser = sender === 'user';
             const messageDiv = document.createElement('div');
-            messageDiv.className = `max-w-[85%] sm:max-w-[80%] p-3.5 rounded-2xl text-sm sm:text-base leading-relaxed shadow-sm whitespace-pre-line ${
-                sender === 'user' 
-                    ? 'bg-[#4A7C59] text-white self-end rounded-br-sm' 
-                    : 'bg-[#F0F5F1] text-[#2C3E35] self-start rounded-bl-sm'
-            }`;
-            messageDiv.textContent = text;
-            chatMessages.insertBefore(messageDiv, typingIndicator);
-            scrollToBottom();
-        }
-
-        function scrollToBottom() {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function showTyping() {
-            typingIndicator.classList.remove('hidden');
-            scrollToBottom();
-        }
-
-        function hideTyping() {
-            typingIndicator.classList.add('hidden');
-        }
-
-        function clearChat() {
-            chatMessages.innerHTML = '';
-            chatMessages.appendChild(typingIndicator);
-            chatHistory = [];
-            appendMessage("Hola. Hemos reiniciado la conversación. ¿Cómo te sientes en este instante?", 'bot');
-        }
-
-        async function callGeminiAPI(promptText) {
-            showTyping();
+            messageDiv.className = `flex items-start gap-3 max-w-[85%] sm:max-w-[75%] ${isUser ? 'ml-auto flex-row-reverse' : ''}`;
             
-            // Añadir turno del usuario al historial
-            chatHistory.push({ role: "user", parts: [{ text: promptText }] });
+            let bubbleStyle = isUser 
+                ? 'bg-emerald-600 text-white rounded-2xl rounded-tr-none shadow-sm' 
+                : (isCrisis 
+                    ? 'bg-red-50 border-2 border-red-300 text-red-900 rounded-2xl rounded-tl-none shadow-md' 
+                    : 'bg-white border border-emerald-100 text-slate-700 rounded-2xl rounded-tl-none shadow-sm');
 
-            const apiKey = ""; // Automáticamente provisto por el entorno en runtime
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            let iconHtml = isUser 
+                ? '<div class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center shrink-0 shadow-sm text-sm"><i class="fa-solid fa-user"></i></div>'
+                : `<div class="w-8 h-8 rounded-full ${isCrisis ? 'bg-red-600 text-white animate-bounce' : 'bg-emerald-600 text-white'} flex items-center justify-center shrink-0 shadow-sm text-sm"><i class="fa-solid ${isCrisis ? 'fa-triangle-exclamation' : 'fa-dove'}"></i></div>`;
 
-            const payload = {
-                contents: chatHistory,
-                systemInstruction: {
-                    parts: [{ text: systemInstructionText }]
-                }
-            };
-
-            let attempts = 0;
-            const maxRetries = 3;
-            let responseData = null;
-
-            while (attempts < maxRetries) {
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (response.ok) {
-                        responseData = await response.json();
-                        break;
-                    } else {
-                        attempts++;
-                        await new Promise(resolve => setTimeout(resolve, attempts * 1000));
-                    }
-                } catch (error) {
-                    attempts++;
-                    await new Promise(resolve => setTimeout(resolve, attempts * 1000));
-                }
-            }
-
-            hideTyping();
-
-            if (responseData && responseData.candidates && responseData.candidates[0]?.content) {
-                const modelReply = responseData.candidates[0].content.parts[0].text;
-                chatHistory.push({ role: "model", parts: [{ text: modelReply }] });
-                appendMessage(modelReply, 'bot');
-            } else {
-                // Fallback seguro de emergencia si la red falla temporalmente
-                const fallbackMsg = "Estoy aquí contigo. En este momento tengo una pequeña intermitencia de conexión, pero recuerda que cuentas con la línea gratuita 135 disponible las 24 horas si necesitas hablar con un profesional ahora mismo.";
-                appendMessage(fallbackMsg, 'bot');
-            }
+            messageDiv.innerHTML = `
+                ${iconHtml}
+                <div class="${bubbleStyle} p-4 text-sm sm:text-base leading-relaxed">
+                    ${text}
+                </div>
+            `;
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        function sendMessage() {
-            const text = userInput.value.trim();
-            if (text === "") return;
-
-            appendMessage(text, 'user');
-            userInput.value = "";
-            callGeminiAPI(text);
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'flex items-start gap-3 max-w-[75%]';
+            typingDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm text-sm">
+                    <i class="fa-solid fa-dove"></i>
+                </div>
+                <div class="bg-white border border-emerald-100 px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-slate-400 flex items-center gap-1.5">
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce"></span>
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                    <span class="w-2 h-2 bg-emerald-600 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                </div>
+            `;
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
+        function removeTypingIndicator() {
+            const typingDiv = document.getElementById('typingIndicator');
+            if (typingDiv) typingDiv.remove();
+        }
+
+        function processBotResponse(text) {
+            const lowerText = text.toLowerCase();
+            
+            // 1. Detección de crisis estricta y con extrema sensibilidad
+            const hasCrisis = crisisKeywords.some(keyword => lowerText.includes(keyword));
+            
+            if (hasCrisis) {
+                return {
+                    text: `<p class="font-bold text-red-700 mb-2 flex items-center gap-1.5 text-base">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Tu vida es sumamente valiosa y no estás sola ni solo en esto.
+                           </p>
+                           <p class="mb-3">Por favor, comunícate de inmediato con profesionales que pueden ayudarte en este instante de manera confidencial:</p>
+                           <div class="space-y-2 mb-3">
+                               <a href="tel:135" class="block bg-red-600 hover:bg-red-700 text-white text-center font-bold py-2.5 px-4 rounded-xl shadow transition">
+                                   📞 Llamar al 135 (Línea de Prevención del Suicidio 24hs)
+                               </a>
+                               <a href="tel:911" class="block bg-slate-800 hover:bg-slate-900 text-white text-center font-bold py-2.5 px-4 rounded-xl shadow transition">
+                                   🚨 Llamar al 911 (Emergencias Médicas / Policiales)
+                               </a>
+                           </div>
+                           <p class="text-xs text-red-800">Hay personas preparadas esperándote al otro lado de la línea para escucharte con empatía y sin juzgarte. Permite que te acompañen.</p>`,
+                    isCrisis: true
+                };
             }
-        }
 
-        function handleChoice(tipo) {
-            let promptText = "";
-            if (tipo === 'Ansiedad') {
-                promptText = "Siento mucha ansiedad y nerviosismo en este momento, ¿qué puedo hacer?";
-            } else if (tipo === 'Tristeza') {
-                promptText = "Me siento muy triste, bajoneado/a y abrumado/a hoy.";
-            } else if (tipo === 'Desahogo') {
-                promptText = "Necesito desahogarme y sacar un peso que tengo en la cabeza.";
+            // 2. Clasificación de categorías naturales
+            let category = 'general';
+            if (lowerText.includes('hola') || lowerText.includes('buenos dias') || lowerText.includes('buenas tardes') || lowerText.includes('buenas noches') || lowerText.includes('saludos')) {
+                category = 'saludos';
+            } else if (lowerText.includes('ansiedad') || lowerText.includes('ansioso') || lowerText.includes('ansiosa') || lowerText.includes('ataque') || lowerText.includes('nervios') || lowerText.includes('mucha ansiedad')) {
+                category = 'ansiedad';
+            } else if (lowerText.includes('triste') || lowerText.includes('tristeza') || lowerText.includes('llorar') || lowerText.includes('abrumado') || lowerText.includes('abrumada') || lowerText.includes('mal') || lowerText.includes('depre')) {
+                category = 'tristeza';
+            } else if (lowerText.includes('desahogar') || lowerText.includes('hablar') || lowerText.includes('contar') || lowerText.includes('solo quiero desahogarme')) {
+                category = 'desahogo';
+            } else if (lowerText.includes('gracias') || lowerText.includes('agradezco') || lowerText.includes('muchas gracias')) {
+                category = 'agradecimiento';
             }
 
-            appendMessage(promptText, 'user');
-            callGeminiAPI(promptText);
+            const responseHtml = `<p>${getUniqueRandomResponse(category)}</p>`;
+            return { text: responseHtml, isCrisis: false };
         }
+
+        function handleUserMessage(text) {
+            if (!text.trim()) return;
+            
+            appendMessage('user', text);
+            userInput.value = '';
+
+            showTypingIndicator();
+
+            // Simulación de tiempo de respuesta humano natural (800ms - 1500ms)
+            const delay = Math.random() * 700 + 800;
+
+            setTimeout(() => {
+                removeTypingIndicator();
+                const botResult = processBotResponse(text);
+                appendMessage('bot', botResult.text, botResult.isCrisis);
+            }, delay);
+        }
+
+        // Event listener para el formulario
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleUserMessage(userInput.value);
+        });
+
+        // Función para opciones rápidas
+        window.handleQuickOption = function(optionText) {
+            handleUserMessage(optionText);
+        };
+
+        // Botón limpiar / reiniciar
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            chatContainer.innerHTML = `
+                <div class="flex items-start gap-3 max-w-[85%] sm:max-w-[75%]">
+                    <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm text-sm">
+                        <i class="fa-solid fa-dove"></i>
+                    </div>
+                    <div class="bg-white border border-emerald-100 p-4 rounded-2xl rounded-tl-none shadow-sm text-slate-700 text-sm sm:text-base leading-relaxed">
+                        <p class="font-semibold text-emerald-800 mb-1">Conversación reiniciada. 🌿</p>
+                        <p>Estoy de nuevo aquí contigo. Respira hondo y cuéntame cómo te sientes en este momento.</p>
+                    </div>
+                </div>
+            `;
+        });
     </script>
 </body>
 </html>
