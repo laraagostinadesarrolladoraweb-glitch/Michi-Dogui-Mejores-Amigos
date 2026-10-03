@@ -1,849 +1,526 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SketchSync Live - Collaborative Whiteboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        canvasBg: { light: '#f8fafc', dark: '#0f172a' }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .sticky-font { font-family: 'Caveat', cursive; }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .dark ::-webkit-scrollbar-track { background: transparent; }
-        .dark ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Guazú - Mi Mascota Virtual</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #fffbeb 0%, #fef3c7 100%);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 16px max(20px, env(safe-area-inset-bottom));
+      position: relative;
+    }
+
+    .bg-particle {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatBg 8s infinite ease-in-out;
+      z-index: 1;
+    }
+
+    @keyframes floatBg {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.5; }
+      50% { transform: translateY(-30px) scale(1.1); opacity: 0.9; }
+    }
+
+    .top-panel {
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 20;
+    }
+
+    .nombre-mascota {
+      color: #b45309;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .barras-container {
+      width: 100%;
+      display: flex;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px 14px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(180, 83, 9, 0.08);
+      border: 2px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .barra-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .barra-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #78350f;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .progreso-track {
+      background: #fde68a;
+      height: 10px;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progreso-fill {
+      height: 100%;
+      width: 100%;
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+
+    #fill-hambre { background: linear-gradient(90deg, #34d399, #10b981); }
+    #fill-felicidad { background: linear-gradient(90deg, #f59e0b, #d97706); }
+
+    .stage {
+      flex: 1;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    .speech-bubble {
+      background: #ffffff;
+      color: #78350f;
+      padding: 10px 16px;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 1.4;
+      box-shadow: 0 6px 16px rgba(180, 83, 9, 0.1);
+      margin-bottom: 12px;
+      position: relative;
+      border: 2px solid #f59e0b;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 8px 8px 0;
+      border-style: solid;
+      border-color: #ffffff transparent;
+    }
+
+    .guazu-wrapper {
+      width: 160px;
+      height: 160px;
+      cursor: pointer;
+      position: relative;
+      animation: floatIdle 3.5s infinite ease-in-out;
+    }
+
+    @keyframes floatIdle {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .guazu-wrapper.happy-bounce { animation: bounce 0.6s ease; }
+    .guazu-wrapper.eat-wiggle { animation: chew 0.8s ease; }
+    .guazu-wrapper.catch-ball { animation: catchJump 0.8s ease; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-20px) scale(1.1, 0.9); }
+    }
+
+    @keyframes chew {
+      0%, 100% { transform: scale(1); }
+      30% { transform: scale(1.08, 0.92); }
+      60% { transform: scale(0.95, 1.05); }
+    }
+
+    @keyframes catchJump {
+      0% { transform: translateY(0); }
+      30% { transform: translateY(-25px) rotate(-8deg); }
+      100% { transform: translateY(0); }
+    }
+
+    .animated-item {
+      position: absolute;
+      font-size: 28px;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    .anim-fish { animation: dropFood 0.6s forwards; }
+    @keyframes dropFood {
+      0% { transform: translateY(-80px) scale(1.2); opacity: 1; }
+      100% { transform: translateY(10px) scale(0.4); opacity: 0; }
+    }
+
+    .anim-ball { animation: throwBall 0.8s forwards; }
+    @keyframes throwBall {
+      0% { transform: translate(-100px, 40px) scale(1); }
+      50% { transform: translate(-20px, -30px) scale(1.2); }
+      100% { transform: translate(0px, 10px) scale(0.2); opacity: 0; }
+    }
+
+    .shadow {
+      width: 110px;
+      height: 12px;
+      background: rgba(180, 83, 9, 0.15);
+      border-radius: 50%;
+      margin-top: 6px;
+    }
+
+    .controls {
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      gap: 12px;
+      background: #ffffff;
+      padding: 8px;
+      border-radius: 18px;
+      box-shadow: 0 6px 18px rgba(180, 83, 9, 0.15);
+      border: 2px solid #f59e0b;
+      z-index: 20;
+    }
+
+    .btn {
+      flex: 1;
+      background: #fff3c4;
+      color: #78350f;
+      border: none;
+      padding: 12px;
+      border-radius: 14px;
+      font-weight: 900;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      touch-action: manipulation;
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+      background: #fde68a;
+    }
+
+    .btn-icon { font-size: 18px; }
+
+    .heart-particle {
+      position: absolute;
+      pointer-events: none;
+      animation: floatUp 1.2s forwards ease-out;
+      z-index: 30;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(0.8); }
+      100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
+    }
+  </style>
 </head>
-<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 h-screen w-screen overflow-hidden flex flex-col antialiased select-none">
+<body>
 
-    <header class="h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 flex items-center justify-between z-30 shrink-0">
-        <!-- Logo & Room Info -->
-        <div class="flex items-center space-x-4">
-            <div class="flex items-center space-x-2">
-                <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md shadow-indigo-500/20 flex items-center justify-center">
-                    <i data-lucide="pen-tool" class="w-5 h-5"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-base tracking-tight bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">SketchSync</h1>
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Real-Time Canvas</p>
-                </div>
-            </div>
+  <div class="bg-particle" style="width: 70px; height: 70px; top: 10%; left: 5%;"></div>
+  <div class="bg-particle" style="width: 100px; height: 100px; top: 50%; right: 5%;"></div>
 
-            <div class="h-6 w-[1px] bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
+  <div class="top-panel">
+    <div class="nombre-mascota">Guazú</div>
 
-            <!-- Room Badge -->
-            <div class="flex items-center space-x-2 bg-slate-100 dark:bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700/60 text-xs">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-slate-500 dark:text-slate-400">Sala:</span>
-                <span id="roomNameDisplay" class="font-mono font-bold text-indigo-600 dark:text-indigo-400">ROOM-DEMO</span>
-                <button onclick="openRoomModal()" class="ml-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition" title="Cambiar sala">
-                    <i data-lucide="settings" class="w-3.5 h-3.5"></i>
-                </button>
-            </div>
-        </div>
+    <div class="barras-container">
+      <div class="barra-item">
+        <div class="barra-label"><span>Hambre</span><span id="txt-hambre">100%</span></div>
+        <div class="progreso-track"><div class="progreso-fill" id="fill-hambre"></div></div>
+      </div>
+      <div class="barra-item">
+        <div class="barra-label"><span>Felicidad</span><span id="txt-felicidad">100%</span></div>
+        <div class="progreso-track"><div class="progreso-fill" id="fill-felicidad"></div></div>
+      </div>
+    </div>
+  </div>
 
-        <!-- Active Users Avatars & Status -->
-        <div class="flex items-center space-x-3">
-            <div id="activeUsersContainer" class="flex items-center -space-x-2 overflow-hidden py-1">
-                <!-- Populated via JS -->
-            </div>
-            
-            <div class="h-6 w-[1px] bg-slate-200 dark:bg-slate-800"></div>
+  <div class="stage" id="stage-area">
+    <div class="speech-bubble" id="bocadillo">¡Aowu! Tócame para darme mimos o aprender sobre el monte 🐾</div>
+    
+    <div class="guazu-wrapper" id="guazu-box" onclick="acariciar(event)">
+      <svg id="guazu-svg" viewBox="0 0 100 100" width="100%" height="100%">
+        <!-- Orejas grandes características del aguará guazú -->
+        <polygon points="30,35 15,5 42,24" fill="#c86d25" stroke="#934710" stroke-width="1.5"/>
+        <polygon points="31,31 20,11 39,24" fill="#f4a261"/>
+        <polygon points="70,35 85,5 58,24" fill="#c86d25" stroke="#934710" stroke-width="1.5"/>
+        <polygon points="69,31 80,11 61,24" fill="#f4a261"/>
 
-            <!-- Theme Toggle & Export -->
-            <div class="flex items-center space-x-2">
-                <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition" title="Cambiar Tema">
-                    <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
-                    <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
-                </button>
-                <button onclick="exportCanvas()" class="flex items-center space-x-1.5 bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/20 transition">
-                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                    <span class="hidden md:inline">Exportar PNG</span>
-                </button>
-            </div>
-        </div>
-    </header>
+        <!-- Cabeza estirada y hocico fino -->
+        <ellipse cx="50" cy="46" rx="26" ry="22" fill="#c86d25" stroke="#934710" stroke-width="1.5"/>
+        <!-- Hocico alargado oscuro y barbilla blanca -->
+        <path d="M 40 50 L 60 50 L 63 62 L 37 62 Z" fill="#d97706"/>
+        <path d="M 47 52 L 53 52 L 54 58 L 46 58 Z" fill="#1f110b"/>
+        <path d="M 40 62 C 45 67 55 67 60 62 C 55 68 45 68 40 62 Z" fill="#ffffff"/>
 
-    <div class="flex-1 relative flex overflow-hidden">
+        <!-- Ojos expresivos -->
+        <g id="ojos">
+          <circle cx="38" cy="40" r="4.5" fill="#e9c46a"/>
+          <circle cx="38" cy="40" r="2.5" fill="#1f110b"/>
+          <circle cx="36.8" cy="39" r="1" fill="#ffffff"/>
+          <circle cx="62" cy="40" r="4.5" fill="#e9c46a"/>
+          <circle cx="62" cy="40" r="2.5" fill="#1f110b"/>
+          <circle cx="60.8" cy="39" r="1" fill="#ffffff"/>
+        </g>
+
+        <!-- Boca -->
+        <path id="boca" d="M 47 62 Q 50 65 53 62" fill="none" stroke="#1f110b" stroke-width="1.5" stroke-linecap="round"/>
         
-        <!-- Floating Toolbar (Left/Center Top) -->
-        <div class="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 p-1.5 rounded-2xl shadow-xl flex items-center space-x-1 z-20">
-            <!-- Tools -->
-            <button onclick="setTool('pen')" id="tool-pen" class="tool-btn p-2.5 rounded-xl bg-indigo-600 text-white transition flex items-center justify-center" title="Lápiz (Pencil)">
-                <i data-lucide="pencil" class="w-4 h-4"></i>
-            </button>
-            <button onclick="setTool('line')" id="tool-line" class="tool-btn p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition flex items-center justify-center" title="Línea (Line)">
-                <i data-lucide="slash" class="w-4 h-4"></i>
-            </button>
-            <button onclick="setTool('rectangle')" id="tool-rectangle" class="tool-btn p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition flex items-center justify-center" title="Rectángulo (Rectangle)">
-                <i data-lucide="square" class="w-4 h-4"></i>
-            </button>
-            <button onclick="setTool('circle')" id="tool-circle" class="tool-btn p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition flex items-center justify-center" title="Círculo (Circle)">
-                <i data-lucide="circle" class="w-4 h-4"></i>
-            </button>
-            <button onclick="setTool('text')" id="tool-text" class="tool-btn p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition flex items-center justify-center" title="Texto (Text)">
-                <i data-lucide="type" class="w-4 h-4"></i>
-            </button>
-            <button onclick="setTool('sticky')" id="tool-sticky" class="tool-btn p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition flex items-center justify-center" title="Nota Adhesiva (Sticky Note)">
-                <i data-lucide="sticky-note" class="w-4 h-4"></i>
-            </button>
-            <button onclick="setTool('eraser')" id="tool-eraser" class="tool-btn p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition flex items-center justify-center" title="Borrador (Eraser)">
-                <i data-lucide="eraser" class="w-4 h-4"></i>
-            </button>
+        <!-- Cuerpo compacto sentado -->
+        <ellipse cx="50" cy="74" rx="22" ry="18" fill="#c86d25" stroke="#934710" stroke-width="1.5"/>
+        <ellipse cx="50" cy="76" rx="12" ry="12" fill="#ffffff"/>
 
-            <div class="h-6 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1"></div>
-
-            <!-- Color Palette -->
-            <div class="flex items-center space-x-1.5 px-1">
-                <button onclick="setColor('#6366f1')" class="color-swatch w-5 h-5 rounded-full bg-indigo-500 ring-2 ring-offset-2 ring-indigo-500 dark:ring-offset-slate-900 transition" data-color="#6366f1"></button>
-                <button onclick="setColor('#ef4444')" class="color-swatch w-5 h-5 rounded-full bg-red-500 hover:scale-110 transition" data-color="#ef4444"></button>
-                <button onclick="setColor('#10b981')" class="color-swatch w-5 h-5 rounded-full bg-emerald-500 hover:scale-110 transition" data-color="#10b981"></button>
-                <button onclick="setColor('#f59e0b')" class="color-swatch w-5 h-5 rounded-full bg-amber-500 hover:scale-110 transition" data-color="#f59e0b"></button>
-                <button onclick="setColor('#0f172a')" class="color-swatch w-5 h-5 rounded-full bg-slate-900 dark:bg-white hover:scale-110 transition" data-color="#0f172a"></button>
-            </div>
-
-            <div class="h-6 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1"></div>
-
-            <!-- Stroke Size -->
-            <div class="flex items-center space-x-2 px-1">
-                <i data-lucide="minus" class="w-3.5 h-3.5 text-slate-400"></i>
-                <input type="range" id="strokeWidth" min="1" max="24" value="4" oninput="setStrokeWidth(this.value)" class="w-16 accent-indigo-600 cursor-pointer">
-                <i data-lucide="plus" class="w-3.5 h-3.5 text-slate-400"></i>
-            </div>
-
-            <div class="h-6 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1"></div>
-
-            <!-- Clear Canvas Button -->
-            <button onclick="clearCanvas()" class="p-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 text-red-500 transition flex items-center justify-center" title="Limpiar lienzo">
-                <i data-lucide="trash-2" class="w-4 h-4"></i>
-            </button>
-        </div>
-
-        <!-- Zoom Controls (Bottom Right) -->
-        <div class="absolute bottom-6 right-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 p-1.5 rounded-2xl shadow-xl flex items-center space-x-1 z-20">
-            <button onclick="zoomIn()" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition" title="Acercar">
-                <i data-lucide="zoom-in" class="w-4 h-4"></i>
-            </button>
-            <span id="zoomDisplay" class="text-xs font-mono font-bold px-2 text-slate-500 dark:text-slate-400">100%</span>
-            <button onclick="zoomOut()" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition" title="Alejar">
-                <i data-lucide="zoom-out" class="w-4 h-4"></i>
-            </button>
-            <button onclick="resetZoom()" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition text-xs font-semibold" title="Restablecer vista">
-                1:1
-            </button>
-        </div>
-
-        <div id="canvasContainer" class="flex-1 relative overflow-hidden bg-slate-100 dark:bg-slate-950 cursor-crosshair">
-            <canvas id="whiteboard" class="absolute top-0 left-0"></canvas>
-            
-            <!-- DOM Layer for Sticky Notes and Active Inputs -->
-            <div id="domLayer" class="absolute top-0 left-0 w-full h-full pointer-events-none"></div>
-
-            <!-- Real-Time Cursors Layer -->
-            <div id="cursorsLayer" class="absolute top-0 left-0 w-full h-full pointer-events-none z-10"></div>
-        </div>
-
+        <!-- Patas delanteras largas -->
+        <g id="patitas">
+          <rect x="40" y="78" width="5" height="15" rx="2.5" fill="#1f110b"/>
+          <rect x="55" y="78" width="5" height="15" rx="2.5" fill="#1f110b"/>
+        </g>
+      </svg>
     </div>
 
-    <div id="roomModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
-            <button onclick="closeRoomModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            
-            <div class="flex items-center space-x-3 mb-4">
-                <div class="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 p-3 rounded-2xl border border-indigo-500/20">
-                    <i data-lucide="users" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Unirse o Crear Sala</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Colabora en tiempo real con pestañas o amigos</p>
-                </div>
-            </div>
+    <div class="shadow"></div>
+  </div>
 
-            <div class="space-y-4 mb-6">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Tu Nombre de Usuario</label>
-                    <input type="text" id="userNameInput" placeholder="Tu Nombre de Usuario" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ID de la Sala</label>
-                    <input type="text" id="roomIdInput" placeholder="Ej. ROOM-101" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 focus:outline-none focus:border-indigo-500 transition">
-                </div>
-            </div>
+  <div class="controls">
+    <button class="btn" id="btn-comer" onclick="alimentar()">
+      <span class="btn-icon">🥩</span>
+      <span>Alimentar</span>
+    </button>
+    <button class="btn" id="btn-jugar" onclick="jugar()">
+      <span class="btn-icon">🌿</span>
+      <span>Jugar</span>
+    </button>
+  </div>
 
-            <div class="flex space-x-3">
-                <button onclick="generateRandomRoom()" class="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold py-2.5 rounded-xl text-xs transition">
-                    Generar ID Aleatorio
-                </button>
-                <button onclick="joinRoom()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl text-xs shadow-md shadow-indigo-600/20 transition">
-                    Conectar Sala
-                </button>
-            </div>
-        </div>
-    </div>
+  <script>
+    let hambre = parseInt(localStorage.getItem('guazu_v1_hambre')) || 100;
+    let felicidad = parseInt(localStorage.getItem('guazu_v1_felicidad')) || 100;
 
-    <div id="toastContainer" class="fixed bottom-6 left-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+    const fillHambre = document.getElementById('fill-hambre');
+    const fillFelicidad = document.getElementById('fill-felicidad');
+    const txtHambre = document.getElementById('txt-hambre');
+    const txtFelicidad = document.getElementById('txt-felicidad');
+    const ojos = document.getElementById('ojos');
+    const boca = document.getElementById('boca');
+    const bocadillo = document.getElementById('bocadillo');
+    const guazuBox = document.getElementById('guazu-box');
+    const stageArea = document.getElementById('stage-area');
 
-    <script>
-        // --- App State & Configuration ---
-        const state = {
-            tool: 'pen', // pen, line, rectangle, circle, text, sticky, eraser
-            color: '#6366f1',
-            strokeWidth: 4,
-            isDrawing: false,
-            startX: 0,
-            startY: 0,
-            zoom: 1,
-            panX: 0,
-            panY: 0,
-            userName: 'Usuario_' + Math.floor(Math.random() * 1000),
-            roomId: 'ROOM-DEMO',
-            userId: 'user_' + Math.random().toString(36.substring(2, 9)),
-            elements: [], // stores drawing paths, shapes, text, stickies
-            activeUsers: new Map()
-        };
+    const frasesComer = [
+      "🥩 ¡Ñam! Qué rica carne.",
+      "🦴 ¡Muchas gracias por el banquete!",
+      "🌿 ¡Me encanta este alimento!",
+      "🐾 ¡Panza llena, corazón contento!"
+    ];
 
-        let canvas, ctx;
-        let channel; // BroadcastChannel for multi-tab real-time sync
-        let snapshot = null; // for shape preview during drag
+    const frasesJugar = [
+      "🌿 ¡Qué divertido correr por los esteros!",
+      "🐾 ¡Aowu! Disfruto mucho pasear.",
+      "✨ ¡Qué energía tan linda!",
+      "🌾 ¡Explorando el monte!"
+    ];
 
-        // Color generator for users
-        const userColors = ['#f43f5e', '#ec4899', '#8b5cf6', '#6366f1', '#3b82f6', '#06b6d4', '#10b981', '#f59e0b'];
-        const myColor = userColors[Math.floor(Math.random() * userColors.length)];
+    const sabiduriaGuazu = [
+      "💡 Dato real: El aguará guazú es el cánido más grande de Sudamérica y vive en pastizales y humedales.",
+      "💡 Dato real: Sus patas largas y negras le permiten caminar con facilidad entre los pastos altos.",
+      "💡 Dato real: A pesar de su apariencia similar a un zorro con patas de lobo, es una especie única y solitaria.",
+      "💡 Dato real: Su dieta es omnívora: come pequeños animales, aves, insectos y también frutos silvestres.",
+      "💡 Conservación: Es un animal inofensivo para los humanos y actualmente se encuentra protegido por estar amenazado.",
+      "📜 Curiosidad: Su nombre en guaraní significa 'zorro grande'.",
+      "📜 Curiosidad: Tienen hábitos preferentemente crepusculares y nocturnos.",
+      "📜 Curiosidad: Sus grandes orejas le ayudan a detectar sonidos sutiles en medio de la llanura."
+    ];
 
-        // Initialize on Load
-        document.addEventListener('DOMContentLoaded', () => {
-            canvas = document.getElementById('whiteboard');
-            ctx = canvas.getContext('2d');
+    function guardar() {
+      localStorage.setItem('guazu_v1_hambre', hambre);
+      localStorage.setItem('guazu_v1_felicidad', felicidad);
+    }
 
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
+    function mostrarTexto(msg) {
+      bocadillo.innerText = msg;
+    }
 
-            setupEventListeners();
-            initBroadcastChannel();
-            lucide.createIcons();
+    function obtenerElementoAleatorio(array) {
+      return array[Math.floor(Math.random() * array.length)];
+    }
 
-            // Set initial inputs
-            document.getElementById('userNameInput').value = state.userName;
-            document.getElementById('roomIdInput').value = state.roomId;
-            document.getElementById('roomNameDisplay').innerText = state.roomId;
+    function actualizarInterfaz(mensajePersonalizado = null) {
+      fillHambre.style.width = hambre + '%';
+      fillFelicidad.style.width = felicidad + '%';
+      txtHambre.innerText = hambre + '%';
+      txtFelicidad.innerText = felicidad + '%';
 
-            // Register self active user
-            updateActiveUserPresence();
-        });
-
-        // --- Canvas Resize & Setup ---
-        function resizeCanvas() {
-            const container = document.getElementById('canvasContainer');
-            canvas.width = container.clientWidth * window.devicePixelRatio;
-            canvas.height = container.clientHeight * window.devicePixelRatio;
-            canvas.style.width = container.clientWidth + 'px';
-            canvas.style.height = container.clientHeight + 'px';
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-            redrawCanvas();
+      if (hambre <= 0 || felicidad <= 0) {
+        ojos.innerHTML = `
+          <path d="M 34 38 L 42 42" stroke="#1f110b" stroke-width="2" stroke-linecap="round"/>
+          <path d="M 34 42 L 42 38" stroke="#1f110b" stroke-width="2" stroke-linecap="round"/>
+          <path d="M 58 38 L 66 42" stroke="#1f110b" stroke-width="2" stroke-linecap="round"/>
+          <path d="M 58 42 L 66 38" stroke="#1f110b" stroke-width="2" stroke-linecap="round"/>
+        `;
+        boca.setAttribute('d', 'M 47 64 Q 50 60 53 64');
+        
+        if (mensajePersonalizado) {
+          mostrarTexto(mensajePersonalizado);
+        } else if (hambre <= 0 && felicidad <= 0) {
+          mostrarTexto("😿 ¡Tengo hambre y tristeza! Toca 'Alimentar' 🥩 y 'Jugar' 🌿");
+        } else if (hambre <= 0) {
+          mostrarTexto("😾 ¡Necesito energía! Toca el botón 'Alimentar' 🥩");
+        } else {
+          mostrarTexto("😿 Estoy triste... Presiona 'Jugar' 🌿");
         }
-
-        // --- Event Listeners for Drawing & Panning ---
-        function setupEventListeners() {
-            const container = document.getElementById('canvasContainer');
-
-            container.addEventListener('mousedown', handleMouseDown);
-            container.addEventListener('mousemove', handleMouseMove);
-            container.addEventListener('mouseup', handleMouseUp);
-            container.addEventListener('mouseleave', handleMouseUp);
-
-            // Touch events for mobile/tablet
-            container.addEventListener('touchstart', (e) => {
-                const touch = e.touches[0];
-                handleMouseDown({ clientX: touch.clientX, clientY: touch.clientY, button: 0 });
-                e.preventDefault();
-            });
-            container.addEventListener('touchmove', (e) => {
-                const touch = e.touches[0];
-                handleMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
-                e.preventDefault();
-            });
-            container.addEventListener('touchend', (e) => {
-                handleMouseUp();
-                e.preventDefault();
-            });
+      } else if (hambre < 40 || felicidad < 40) {
+        ojos.innerHTML = `
+          <circle cx="38" cy="40" r="3" fill="#1f110b"/>
+          <circle cx="62" cy="40" r="3" fill="#1f110b"/>
+        `;
+        boca.setAttribute('d', 'M 47 63 L 53 63');
+        
+        if (mensajePersonalizado) {
+          mostrarTexto(mensajePersonalizado);
+        } else if (hambre < 40 && felicidad < 40) {
+          mostrarTexto("🙀 Toca 'Alimentar' 🥩 y 'Jugar' 🌿 para alegrarme.");
+        } else if (hambre < 40) {
+          mostrarTexto("😾 Tengo hambre... ¡Presiona 'Alimentar' 🥩!");
+        } else {
+          mostrarTexto("😿 Me estoy aburriendo... Presiona 'Jugar' 🌿.");
         }
-
-        // Convert Screen coords to Canvas world coords
-        function getCanvasCoordinates(e) {
-            const rect = canvas.getBoundingClientRect();
-            const clientX = e.clientX - rect.left;
-            const clientY = e.clientY - rect.top;
-            const x = (clientX - state.panX) / state.zoom;
-            const y = (clientY - state.panY) / state.zoom;
-            return { x, y };
+      } else {
+        ojos.innerHTML = `
+          <circle cx="38" cy="40" r="4.5" fill="#e9c46a"/>
+          <circle cx="38" cy="40" r="2.5" fill="#1f110b"/>
+          <circle cx="36.8" cy="39" r="1" fill="#ffffff"/>
+          <circle cx="62" cy="40" r="4.5" fill="#e9c46a"/>
+          <circle cx="62" cy="40" r="2.5" fill="#1f110b"/>
+          <circle cx="60.8" cy="39" r="1" fill="#ffffff"/>
+        `;
+        boca.setAttribute('d', 'M 47 62 Q 50 65 53 62');
+        if (mensajePersonalizado) {
+          mostrarTexto(mensajePersonalizado);
         }
-
-        function handleMouseDown(e) {
-            const { x, y } = getCanvasCoordinates(e);
-            state.isDrawing = true;
-            state.startX = x;
-            state.startY = y;
-
-            if (state.tool === 'pen' || state.tool === 'eraser') {
-                state.currentPath = [{ x, y }];
-            } else if (state.tool === 'sticky') {
-                createStickyNote(x, y, '');
-                state.isDrawing = false;
-            } else if (state.tool === 'text') {
-                createTextInput(x, y);
-                state.isDrawing = false;
-            } else {
-                snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            }
-        }
-
-        function handleMouseMove(e) {
-            const { x, y } = getCanvasCoordinates(e);
-
-            // Broadcast cursor position to other tabs
-            broadcastCursor(x, y);
-
-            if (!state.isDrawing) return;
-
-            if (state.tool === 'pen' || state.tool === 'eraser') {
-                state.currentPath.push({ x, y });
-                redrawCanvas();
-                drawCurrentPath();
-            } else if (state.tool === 'line' || state.tool === 'rectangle' || state.tool === 'circle') {
-                redrawCanvas();
-                drawShapePreview(state.startX, state.startY, x, y);
-            }
-        }
-
-        function handleMouseUp(e) {
-            if (!state.isDrawing) return;
-            state.isDrawing = false;
-
-            const coords = e ? getCanvasCoordinates(e) : { x: state.startX, y: state.startY };
-            const endX = coords.x;
-            const endY = coords.y;
-
-            let newElement = null;
-
-            if (state.tool === 'pen') {
-                newElement = {
-                    type: 'pen',
-                    color: state.color,
-                    width: state.strokeWidth,
-                    points: state.currentPath
-                };
-            } else if (state.tool === 'eraser') {
-                newElement = {
-                    type: 'eraser',
-                    width: state.strokeWidth * 3,
-                    points: state.currentPath
-                };
-            } else if (state.tool === 'line') {
-                newElement = {
-                    type: 'line',
-                    color: state.color,
-                    width: state.strokeWidth,
-                    x1: state.startX,
-                    y1: state.startY,
-                    x2: endX,
-                    y2: endY
-                };
-            } else if (state.tool === 'rectangle') {
-                newElement = {
-                    type: 'rectangle',
-                    color: state.color,
-                    width: state.strokeWidth,
-                    x: Math.min(state.startX, endX),
-                    y: Math.min(state.startY, endY),
-                    w: Math.abs(endX - state.startX),
-                    h: Math.abs(endY - state.startY)
-                };
-            } else if (state.tool === 'circle') {
-                const radius = Math.hypot(endX - state.startX, endY - state.startY);
-                newElement = {
-                    type: 'circle',
-                    color: state.color,
-                    width: state.strokeWidth,
-                    cx: state.startX,
-                    cy: state.startY,
-                    r: radius
-                };
-            }
-
-            if (newElement) {
-                state.elements.push(newElement);
-                broadcastElement(newElement);
-            }
-
-            redrawCanvas();
-        }
-
-        // --- Drawing Render Engine ---
-        function redrawCanvas() {
-            ctx.save();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Apply zoom and pan
-            ctx.translate(state.panX, state.panY);
-            ctx.scale(state.zoom, state.zoom);
-
-            // Draw grid background pattern
-            drawGridBackground();
-
-            // Render all stored elements
-            state.elements.forEach(el => renderElement(el));
-
-            ctx.restore();
-        }
-
-        function drawGridBackground() {
-            const isDark = document.documentElement.classList.contains('dark');
-            ctx.strokeStyle = isDark ? '#1e293b' : '#e2e8f0';
-            ctx.lineWidth = 1 / state.zoom;
-
-            const gridSize = 30;
-            const startX = -state.panX / state.zoom;
-            const startY = -state.panY / state.zoom;
-            const endX = startX + (canvas.width / state.zoom);
-            const endY = startY + (canvas.height / state.zoom);
-
-            const offsetX = startX % gridSize;
-            const offsetY = startY % gridSize;
-
-            ctx.beginPath();
-            for (let x = startX - offsetX; x < endX; x += gridSize) {
-                ctx.moveTo(x, startY);
-                ctx.lineTo(x, endY);
-            }
-            for (let y = startY - offsetY; y < endY; y += gridSize) {
-                ctx.moveTo(startX, y);
-                ctx.lineTo(endX, y);
-            }
-            ctx.stroke();
-        }
-
-        function renderElement(el) {
-            ctx.save();
-            ctx.strokeStyle = el.color;
-            ctx.lineWidth = el.width;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-
-            if (el.type === 'pen') {
-                if (!el.points || el.points.length === 0) return;
-                ctx.beginPath();
-                ctx.moveTo(el.points[0].x, el.points[0].y);
-                for (let i = 1; i < el.points.length; i++) {
-                    ctx.lineTo(el.points[i].x, el.points[i].y);
-                }
-                ctx.stroke();
-            } else if (el.type === 'eraser') {
-                if (!el.points || el.points.length === 0) return;
-                ctx.globalCompositeOperation = 'destination-out';
-                ctx.beginPath();
-                ctx.arc(el.points[el.points.length - 1].x, el.points[el.points.length - 1].y, el.width, 0, Math.PI * 2);
-                ctx.fill();
-            } else if (el.type === 'line') {
-                ctx.beginPath();
-                ctx.moveTo(el.x1, el.y1);
-                ctx.lineTo(el.x2, el.y2);
-                ctx.stroke();
-            } else if (el.type === 'rectangle') {
-                ctx.strokeRect(el.x, el.y, el.w, el.h);
-            } else if (el.type === 'circle') {
-                ctx.beginPath();
-                ctx.arc(el.cx, el.cy, el.r, 0, Math.PI * 2);
-                ctx.stroke();
-            }
-            ctx.restore();
-        }
-
-        function drawCurrentPath() {
-            if (!state.currentPath || state.currentPath.length === 0) return;
-            ctx.save();
-            ctx.translate(state.panX, state.panY);
-            ctx.scale(state.zoom, state.zoom);
-
-            ctx.strokeStyle = state.color;
-            ctx.lineWidth = state.strokeWidth;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-
-            if (state.tool === 'eraser') {
-                ctx.globalCompositeOperation = 'destination-out';
-            }
-
-            ctx.beginPath();
-            ctx.moveTo(state.currentPath[0].x, state.currentPath[0].y);
-            for (let i = 1; i < state.currentPath.length; i++) {
-                ctx.lineTo(state.currentPath[i].x, state.currentPath[i].y);
-            }
-            ctx.stroke();
-            ctx.restore();
-        }
-
-        function drawShapePreview(x1, y1, x2, y2) {
-            ctx.save();
-            ctx.translate(state.panX, state.panY);
-            ctx.scale(state.zoom, state.zoom);
-
-            ctx.strokeStyle = state.color;
-            ctx.lineWidth = state.strokeWidth;
-
-            if (state.tool === 'line') {
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.stroke();
-            } else if (state.tool === 'rectangle') {
-                const x = Math.min(x1, x2);
-                const y = Math.min(y1, y2);
-                const w = Math.abs(x2 - x1);
-                const h = Math.abs(y2 - y1);
-                ctx.strokeRect(x, y, w, h);
-            } else if (state.tool === 'circle') {
-                const r = Math.hypot(x2 - x1, y2 - x1);
-                ctx.beginPath();
-                ctx.arc(x1, y1, r, 0, Math.PI * 2);
-                ctx.stroke();
-            }
-            ctx.restore();
-        }
-
-        // --- Sticky Notes & Text DOM Elements ---
-        function createStickyNote(x, y, text = '') {
-            const domLayer = document.getElementById('domLayer');
-            const note = document.createElement('div');
-            note.className = "absolute bg-amber-200 dark:bg-amber-300 text-slate-900 p-4 rounded-xl shadow-xl w-48 h-48 pointer-events-auto flex flex-col justify-between border border-amber-300/50 sticky-font text-lg cursor-move";
-            
-            // Screen coords calculation
-            const screenX = x * state.zoom + state.panX;
-            const screenY = y * state.zoom + state.panY;
-            note.style.left = screenX + 'px';
-            note.style.top = screenY + 'px';
-
-            note.innerHTML = `
-                <div class="flex justify-between items-center mb-1">
-                    <span class="text-[10px] uppercase font-sans tracking-wider opacity-60">Nota</span>
-                    <button onclick="this.parentElement.parentElement.remove()" class="text-slate-700 hover:text-red-600 transition p-1">
-                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                    </button>
-                </div>
-                <textarea class="w-full h-full bg-transparent resize-none focus:outline-none sticky-font text-xl text-slate-900" placeholder="Escribe algo...">${text}</textarea>
-            `;
-
-            domLayer.appendChild(note);
-            lucide.createIcons();
-
-            // Make draggable
-            makeDraggable(note);
-
-            // Broadcast sticky creation
-            broadcastElement({
-                type: 'sticky',
-                x, y, text, id: Math.random().toString(36)
-            });
-        }
-
-        function createTextInput(x, y) {
-            const domLayer = document.getElementById('domLayer');
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.className = "absolute bg-transparent border-b-2 border-indigo-600 text-slate-800 dark:text-slate-100 font-semibold px-2 py-1 pointer-events-auto focus:outline-none";
-            
-            const screenX = x * state.zoom + state.panX;
-            const screenY = y * state.zoom + state.panY;
-            input.style.left = screenX + 'px';
-            input.style.top = screenY + 'px';
-            input.style.fontSize = (16 * state.zoom) + 'px';
-
-            domLayer.appendChild(input);
-            input.focus();
-
-            input.onblur = () => {
-                if (input.value.trim() !== '') {
-                    const textEl = { type: 'text', x, y, text: input.value, color: state.color };
-                    state.elements.push(textEl);
-                    broadcastElement(textEl);
-                    redrawCanvas();
-                }
-                input.remove();
-            };
-            input.onkeydown = (e) => {
-                if (e.key === 'Enter') input.blur();
-            };
-        }
-
-        function makeDraggable(elm) {
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            elm.onmousedown = dragMouseDown;
-
-            function dragMouseDown(e) {
-                if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-            }
-
-            function elementDrag(e) {
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                elm.style.top = (elm.offsetTop - pos2) + "px";
-                elm.style.left = (elm.offsetLeft - pos1) + "px";
-            }
-
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-            }
-        }
-
-        // --- Toolbar Actions ---
-        function setTool(toolName) {
-            state.tool = toolName;
-            document.querySelectorAll('.tool-btn').forEach(btn => {
-                btn.className = "tool-btn p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition flex items-center justify-center";
-            });
-            document.getElementById(`tool-${toolName}`).className = "tool-btn p-2.5 rounded-xl bg-indigo-600 text-white transition flex items-center justify-center";
-        }
-
-        function setColor(hex) {
-            state.color = hex;
-            document.querySelectorAll('.color-swatch').forEach(swatch => {
-                swatch.className = "color-swatch w-5 h-5 rounded-full hover:scale-110 transition";
-                if(swatch.dataset.color === hex) {
-                    swatch.className += " ring-2 ring-offset-2 ring-indigo-500 dark:ring-offset-slate-900";
-                }
-            });
-        }
-
-        function setStrokeWidth(val) {
-            state.strokeWidth = parseInt(val);
-        }
-
-        function clearCanvas() {
-            state.elements = [];
-            document.getElementById('domLayer').innerHTML = '';
-            redrawCanvas();
-            broadcastAction({ type: 'clear' });
-            showToast('Lienzo limpiado con éxito');
-        }
-
-        // --- Zoom & Pan ---
-        function zoomIn() {
-            state.zoom = Math.min(state.zoom * 1.2, 3);
-            updateZoomDisplay();
-            redrawCanvas();
-        }
-
-        function zoomOut() {
-            state.zoom = Math.max(state.zoom / 1.2, 0.3);
-            updateZoomDisplay();
-            redrawCanvas();
-        }
-
-        function resetZoom() {
-            state.zoom = 1;
-            state.panX = 0;
-            state.panY = 0;
-            updateZoomDisplay();
-            redrawCanvas();
-        }
-
-        function updateZoomDisplay() {
-            document.getElementById('zoomDisplay').innerText = Math.round(state.zoom * 100) + '%';
-        }
-
-        // --- Export PNG ---
-        function exportCanvas() {
-            const link = document.createElement('a');
-            link.download = `sketchsync-${state.roomId}-${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            showToast('Imagen exportada correctamente');
-        }
-
-        // --- Real-Time BroadcastChannel Sync (Multi-tab collaboration) ---
-        function initBroadcastChannel() {
-            channel = new BroadcastChannel(`sketchsync_${state.roomId}`);
-            channel.onmessage = (event) => {
-                const { type, payload, senderId, senderName, color } = event.data;
-                if (senderId === state.userId) return;
-
-                if (type === 'draw_element') {
-                    state.elements.push(payload);
-                    redrawCanvas();
-                } else if (type === 'clear') {
-                    state.elements = [];
-                    document.getElementById('domLayer').innerHTML = '';
-                    redrawCanvas();
-                } else if (type === 'cursor') {
-                    updateRemoteCursor(senderId, senderName, color, payload.x, payload.y);
-                } else if (type === 'presence') {
-                    state.activeUsers.set(senderId, { name: senderName, color });
-                    renderActiveUsers();
-                }
-            };
-        }
-
-        function broadcastElement(el) {
-            if (!channel) return;
-            channel.postMessage({
-                type: 'draw_element',
-                payload: el,
-                senderId: state.userId,
-                senderName: state.userName,
-                color: myColor
-            });
-        }
-
-        function broadcastAction(action) {
-            if (!channel) return;
-            channel.postMessage({
-                type: action.type,
-                senderId: state.userId,
-                senderName: state.userName,
-                color: myColor
-            });
-        }
-
-        function broadcastCursor(x, y) {
-            if (!channel) return;
-            channel.postMessage({
-                type: 'cursor',
-                payload: { x, y },
-                senderId: state.userId,
-                senderName: state.userName,
-                color: myColor
-            });
-        }
-
-        function updateActiveUserPresence() {
-            state.activeUsers.set(state.userId, { name: state.userName, color: myColor });
-            renderActiveUsers();
-            if (channel) {
-                channel.postMessage({
-                    type: 'presence',
-                    senderId: state.userId,
-                    senderName: state.userName,
-                    color: myColor
-                });
-            }
-        }
-
-        function updateRemoteCursor(userId, name, color, x, y) {
-            const cursorsLayer = document.getElementById('cursorsLayer');
-            let cursor = document.getElementById(`cursor_${userId}`);
-
-            const screenX = x * state.zoom + state.panX;
-            const screenY = y * state.zoom + state.panY;
-
-            if (!cursor) {
-                cursor = document.createElement('div');
-                cursor.id = `cursor_${userId}`;
-                cursor.className = "absolute pointer-events-none transition-all duration-75 flex items-center space-x-1";
-                cursor.innerHTML = `
-                    <svg class="w-4 h-4 drop-shadow" style="color: ${color}" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
-                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded text-white shadow" style="background-color: ${color}">${name}</span>
-                `;
-                cursorsLayer.appendChild(cursor);
-            }
-
-            cursor.style.transform = `translate(${screenX}px, ${screenY}px)`;
-        }
-
-        function renderActiveUsers() {
-            const container = document.getElementById('activeUsersContainer');
-            container.innerHTML = '';
-
-            state.activeUsers.forEach((user, id) => {
-                const avatar = document.createElement('div');
-                avatar.className = "w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center text-white text-xs font-bold shadow-sm";
-                avatar.style.backgroundColor = user.color;
-                avatar.innerText = user.name.substring(0, 2).toUpperCase();
-                avatar.title = `${user.name} (${id === state.userId ? 'Tú' : 'Colaborador'})`;
-                container.appendChild(avatar);
-            });
-        }
-
-        // --- Room Management Modal ---
-        function openRoomModal() {
-            document.getElementById('roomModal').classList.remove('hidden');
-            document.getElementById('roomModal').classList.add('flex');
-        }
-
-        function closeRoomModal() {
-            document.getElementById('roomModal').classList.remove('flex');
-            document.getElementById('roomModal').classList.add('hidden');
-        }
-
-        function generateRandomRoom() {
-            const randomId = 'ROOM-' + Math.floor(1000 + Math.random() * 9000);
-            document.getElementById('roomIdInput').value = randomId;
-        }
-
-        function joinRoom() {
-            const nameInput = document.getElementById('userNameInput').value.trim();
-            const roomInput = document.getElementById('roomIdInput').value.trim();
-
-            if (nameInput) state.userName = nameInput;
-            if (roomInput) state.roomId = roomInput;
-
-            document.getElementById('roomNameDisplay').innerText = state.roomId;
-            closeRoomModal();
-
-            // Reinitialize channel for new room
-            if (channel) channel.close();
-            initBroadcastChannel();
-            updateActiveUserPresence();
-
-            showToast(`Conectado a la sala: ${state.roomId}`);
-        }
-
-        // --- UI Toasts ---
-        function showToast(message) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = "bg-slate-900 border border-indigo-500/40 text-slate-100 px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-2 text-xs animate-bounce";
-            toast.innerHTML = `
-                <i data-lucide="check-circle" class="w-4 h-4 text-indigo-400"></i>
-                <span>${message}</span>
-            `;
-            container.appendChild(toast);
-            lucide.createIcons();
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        // --- Theme Toggle ---
-        function toggleDarkMode() {
-            document.documentElement.classList.toggle('dark');
-            redrawCanvas();
-        }
-    </script>
+      }
+    }
+
+    function triggerAnim(className) {
+      guazuBox.classList.remove('happy-bounce', 'eat-wiggle', 'catch-ball');
+      void guazuBox.offsetWidth;
+      guazuBox.classList.add(className);
+    }
+
+    function spawnHeart(e) {
+      const heart = document.createElement('div');
+      heart.className = 'heart-particle';
+      heart.innerText = '💚';
+      const rect = guazuBox.getBoundingClientRect();
+      heart.style.left = (e.clientX || (rect.left + rect.width / 2)) + 'px';
+      heart.style.top = (e.clientY || (rect.top + rect.height / 2)) + 'px';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 1000);
+    }
+
+    function alimentar() {
+      hambre = Math.min(100, hambre + 25);
+      if (felicidad < 20) felicidad = Math.min(100, felicidad + 10);
+      guardar();
+
+      const food = document.createElement('div');
+      food.className = 'animated-item anim-fish';
+      food.innerText = '🥩';
+      stageArea.appendChild(food);
+
+      boca.setAttribute('d', 'M 46 61 Q 50 68 54 61');
+
+      setTimeout(() => {
+        triggerAnim('eat-wiggle');
+        food.remove();
+        actualizarInterfaz(obtenerElementoAleatorio(frasesComer));
+      }, 500);
+    }
+
+    function jugar() {
+      felicidad = Math.min(100, felicidad + 25);
+      hambre = Math.max(0, hambre - 5);
+      guardar();
+
+      const ball = document.createElement('div');
+      ball.className = 'animated-item anim-ball';
+      ball.innerText = '🌿';
+      stageArea.appendChild(ball);
+
+      setTimeout(() => {
+        triggerAnim('catch-ball');
+      }, 200);
+
+      setTimeout(() => {
+        ball.remove();
+        actualizarInterfaz(obtenerElementoAleatorio(frasesJugar));
+      }, 700);
+    }
+
+    function acariciar(e) {
+      spawnHeart(e);
+      triggerAnim('happy-bounce');
+      if (hambre < 40 || felicidad < 40) {
+        actualizarInterfaz();
+      } else {
+        actualizarInterfaz(obtenerElementoAleatorio(sabiduriaGuazu));
+      }
+    }
+
+    setInterval(() => {
+      if (hambre > 0 || felicidad > 0) {
+        hambre = Math.max(0, hambre - 2);
+        felicidad = Math.max(0, felicidad - 2);
+        guardar();
+        actualizarInterfaz();
+      }
+    }, 4000);
+
+    window.addEventListener('load', () => {
+      actualizarInterfaz();
+    });
+  </script>
 </body>
 </html>
